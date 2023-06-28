@@ -220,7 +220,7 @@ const dashboardLoad=async(req,res)=>{
             cod
         })
     } catch (error) {
-        console.log(error.message)
+        console.log(error.message);
     }
 }
 
