@@ -227,7 +227,6 @@ const dashboardLoad=async(req,res)=>{
 // Order Status
 const loadOrderStatus=async(req,res)=>{
     try {
-
         const admin=await adminModel.findOne()     
         const orders=await orderModel.find({}).populate('address').populate('userId').populate('product.product_id').exec()
         res.render('admin/orderStatus',
