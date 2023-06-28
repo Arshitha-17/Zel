@@ -110,6 +110,7 @@
             <h4  id="realPrice" style="margin-right: 14px;" >₹<span id="realAmount"><%= product.price %></span></h4>
             <h4  id="offerPrice" class="text-success" ></h4>
             <input type="hidden" id="getOfferPrice"> 
+            <input type="hidden" id="hiddenrealAmount" value="<%= product.price %>"> 
           </div>
           <div class="ratings d-flex flex-row align-items-center">
               <h5 id="productCategory"><%= product.category %></h5>
@@ -293,6 +294,8 @@
     var radioButtons = document.getElementsByName("weight");
     var categoryPrice = document.getElementById('offerPrice')
     var getOfferPrice=document.getElementById('getOfferPrice').value
+    var realAmount= document.getElementById('realAmount');
+    var hiddenrealAmount=document.getElementById('hiddenrealAmount').value
     let price = document.getElementById('price');
     var selectedValue;
 
@@ -308,6 +311,7 @@
     let categoryNewPrice=Number(getOfferPrice)*Number(selectedValue)
     categoryPrice.innerText=categoryNewPrice
     price.value= categoryNewPrice
+    realAmount.innerText=Number(hiddenrealAmount)*Number(selectedValue)
     console.log(price.value);
 
   }

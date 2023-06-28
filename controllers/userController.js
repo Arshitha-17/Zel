@@ -545,25 +545,20 @@ const addtoCartPage = async (req, res) => {
     const userCartData = await cartModel.findOne({ userid: userId }).populate("product.productId");
     let totalPrice = 0;
     let productPrice;
-     console.log("hey cart",userCartData);
-    
-    if (!userCartData || !userCartData.product) {
+    console.log("hey cart", userCartData);
+
+    if (!userCartData || userCartData.product.length === 0) {
       return res.redirect('/cartError');
     }
-  
-      if (userCartData.product.length > 0) {
-        for (const cartItem of userCartData.product) {
-         
-          console.log("hey its me", cartItem);
-          productPrice = cartItem.newPrice * cartItem.quantity;
-          totalPrice += productPrice;
-        }
-      }
-      
-      console.log("productPrice:", productPrice);
-      res.render("cart", { userCartData, totalPrice, productPrice });
-  
-   
+
+    for (const cartItem of userCartData.product) {
+      console.log("hey its me", cartItem);
+      productPrice = cartItem.newPrice * cartItem.quantity;
+      totalPrice += productPrice;
+    }
+
+    console.log("productPrice:", productPrice);
+    res.render("cart", { userCartData, totalPrice, productPrice });
   } catch (error) {
     console.log(error.message);
   }
@@ -578,10 +573,7 @@ const addtoCartPostMethod = async (req, res) => {
     const { productId,price } = req.body;
     // console.log(req.body)
     const cart = await cartModel.findOne({ userid: userId });
-    // if(cart.length<0){
-    //   res.render("cart",{message:'No cart Item'});
-    //   return
-    // }
+
     if (cart) {
       const existingProduct = cart.product.some(
         (product) => product.productId.toString() === productId
