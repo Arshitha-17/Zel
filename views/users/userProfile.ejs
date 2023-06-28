@@ -1,0 +1,255 @@
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/userProfile.css">
+<!-- Template Stylesheet -->
+<!-- <link href="css/style.css" rel="stylesheet"> -->
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
+<%- include('../layouts/header.ejs') %> 
+
+
+<!-- Customized Bootstrap Stylesheet -->
+    <!-- Topbar Start -->
+    <div class="container-fluid px-0 d-none d-lg-block">
+        <div class="row gx-0">
+            <div class="col-lg-4 text-center bg-secondary py-3">
+                <div class="d-inline-flex align-items-center justify-content-center">
+                    <i class="bi bi-envelope fs-1  me-3" style="color: #E88F2A;"></i>
+                    <div class="text-start">
+                        <h6 class="text-uppercase mb-1">Email Us</h6>
+                        <span>zelcakes@gamil.com</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center  border-inner py-3" style="background-color: #E88F2A;">
+                <div class="d-inline-flex align-items-center justify-content-center">
+                    <a href="index.html" class="navbar-brand">
+                        <h1 class="m-0 text-uppercase text-white"><i class="fa fa-birthday-cake fs-1 text-dark me-3"></i>ZEL CAKES</h1>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center bg-secondary py-3">
+                <div class="d-inline-flex align-items-center justify-content-center">
+                    <i class="bi bi-phone-vibrate fs-1  me-3"  style="color: #E88F2A;"></i>
+                    <div class="text-start">
+                        <h6 class="text-uppercase mb-1">Call Us</h6>
+                        <span>7034430171</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Topbar End -->
+
+      <!-- Navbar Start -->
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark shadow-sm py-3 py-lg-0 px-3 px-lg-0" style=" top: 0; z-index: 100; font-family: 'Oswald', sans-serif; font-size: 18px;">
+        <a href="index.html" class="navbar-brand d-block d-lg-none">
+            <h1 class="m-0 text-uppercase text-white"><i class="fa fa-birthday-cake fs-1 text-primary me-3"></i>ZEL CAKES</h1>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <div class="navbar-nav ms-auto mx-lg-auto py-0">
+            <a href="/home" class="nav-item nav-link active">Home</a>
+            <a href="about.html" class="nav-item nav-link">About Us</a>
+            <div class="navbar-nav ms-auto mx-lg-auto py-0" style="padding-left: 70px;">
+            <% category.forEach(function(category) { %>
+            <a href="/categorySorting?id=<%= category._id %>" class="nav-item nav-link"><%= category.category %></a>
+            <% }); %>
+               
+              </div>
+                <a href="/logout" class="nav-item nav-link" style="margin-left: 250px;">Logout</a>
+            </div>
+        </div>
+    </nav>
+    <!-- Navbar End -->
+
+
+    <div class="container mt-4" >
+        <div class="row">
+            <div class="col-lg-3 my-lg-0 my-md-1" >
+                <div id="sidebar" class="bg-purple" >
+                    <div class="h4 text-white">Account</div>
+                    <ul>
+                        <li class="active">
+                            <a href="#" class="text-decoration-none d-flex align-items-start">
+                                <div class="fas fa-box-open pt-2 me-3"></div>
+                                <div class="d-flex flex-column">
+                                    <div class="link">My Orders</div>
+                                    <div class="link-desc">View & Manage orders and returns</div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/address" class="text-decoration-none d-flex align-items-start">
+                                <div class="far fa-address-book pt-2 me-3"></div>
+                                <div class="d-flex flex-column">
+                                    <div class="link">Address Book</div>
+                                    <div class="link-desc">View & Manage Addresses</div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/myProfile" class="text-decoration-none d-flex align-items-start">
+                                <div class="far fa-user pt-2 me-3"></div>
+                                <div class="d-flex flex-column">
+                                    <div class="link">My Profile</div>
+                                    <div class="link-desc">Change your profile details & password</div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/userCoupon" class="text-decoration-none d-flex align-items-start">
+                                <div class="fas fa-headset pt-2 me-3"></div>
+                                <div class="d-flex flex-column">
+                                    <div class="link">Your Coupons</div>
+                                    <div class="link-desc">Here your valid coupons</div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/myWallet" class="text-decoration-none d-flex align-items-start">
+                                <div class="fas fa-headset pt-2 me-3"></div>
+                                <div class="d-flex flex-column">
+                                    <div class="link">Your Wallet</div>
+                                    <div class="link-desc">Here your wallet</div>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-9 my-lg-0 my-1">
+                <div id="main-content" class="bg-white border">
+                    <div class="d-flex flex-column">
+                        <div class="h5">Hello <%=userDetails.name %>,</div>
+                        <div>Logged in as: <%=userDetails.email%></div>
+                        <div>Referral code: <%= code%></div>
+                    </div>
+                    <div class="d-flex my-4 flex-wrap">
+                        <div class="box me-4 my-1 bg-light">
+                            <img src="https://www.freepnglogos.com/uploads/box-png/cardboard-box-brown-vector-graphic-pixabay-2.png" alt="">
+                            <div class="d-flex align-items-center mt-2">
+                                <div class="tag">Orders placed</div>
+                                <div class="ms-auto number"><%=userorder.length%></div>
+                            </div>
+                        </div>
+                        <div class="box me-4 my-1 bg-light">
+                            <img src="https://www.freepnglogos.com/uploads/shopping-cart-png/shopping-cart-campus-recreation-university-nebraska-lincoln-30.png" alt="">
+                            <div class="d-flex align-items-center mt-2">
+                                <div class="tag">Items in Cart</div>
+                                <% if (cart && cart.product && cart.product.length) { %>
+                                    <div class="ms-auto number"><%= cart.product.length %></div>
+                                <% } else { %>
+                                    <div class="ms-auto number">0</div>
+                                <% } %>
+                            </div>
+                        </div>
+                        
+                        <div class="box me-4 my-1 bg-light">
+                            <img src="https://www.freepnglogos.com/uploads/love-png/love-png-heart-symbol-wikipedia-11.png" alt="">
+                            <div class="d-flex align-items-center mt-2">
+                                <div class="tag">Wishlist</div>
+                                <div class="ms-auto number">0</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sorting Options -->
+                   <div class="text-uppercase">Sorting Options:</div>
+                   <div class="my-3">
+                   <a href="/userProfile?sort=latest" class="text-decoration-none">Sort by Latest Order</a>
+                   <span class="mx-2">|</span>
+                   <a href="/userProfile" class="text-decoration-none">Sort by Oldest Order</a>
+                   </div>
+                    <div class="text-uppercase">My orders</div>                
+                    <% userorder.forEach(function(order) { %>
+                    <div class="order my-3 bg-light 0">
+                        <div class="row">
+                            <div class="col-lg-4 p-3">
+                                <div class="d-flex flex-column justify-content-between order-summary">
+                                    <div class="d-flex align-items-center p-2">
+                                        <div class="text-uppercase">Order id: <%= order._id.toString().slice(0,6) %></div>
+                                        <div class="blue-label ms-auto text-uppercase"><%= order.paymentMethod %></div>
+                                    </div>
+                                   
+                                    <!-- <div class="fs-8  p-2">Product Name : </div> -->
+                                    <div class="fs-8  p-2">Total Amount : <%= order.total %></div>
+                                    <div class="fs-8  p-2">Item Quantity : <%= order.itemquantity %></div>
+                                    <div class="fs-8  p-2"><%= order.orderDate.toDateString() %> | <%= order.orderDate.toLocaleTimeString() %></div>
+                                    <!--    <div class="fs-8  p-2">Address : </div> -->
+
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                    <div class="d-sm-flex align-items-sm-start justify-content-sm-between">
+                                       
+                                        <div class="status">
+                                            Status:
+                                            <% if (order.status == "Pending") { %>
+                                              <span class="text-primary"><%= order.status %></span>
+                                            <% } else if (order.status == "Return") { %>
+                                              <span class="text-dark"><%= order.status %></span>
+                                            <% } else if (order.status == "Cancelled") { %>
+                                              <span class="text-danger"><%= order.status %></span>
+                                            <%}else{%>
+                                                <span class="text-success"><%= order.status %></span>
+                                            <%} %>
+                                          </div>
+                                     
+                                        <a href="/orderViewProduct" class="text-decoration-none d-flex align-items-end">
+                                        <div class="btn btn-primary text-uppercase" >View Products</div>
+                                        </a>
+                                       
+                                    </div>
+                                   
+                                
+                                 <div class="progressbar-track">
+                                    <!-- Progress bar code -->
+                                    <ul class="progressbar">
+                                        <li id="step-1" class="text-muted green">
+                                            <span class="fas fa-gift"></span>
+                                        </li>
+                                        <li id="step-2" class="text-muted green">
+                                            <span class="fas fa-check"></span>
+                                        </li>
+                                        <li id="step-3" class="text-muted green">
+                                            <span class="fas fa-box"></span>
+                                        </li>
+                                        <li id="step-4" class="text-muted green">
+                                            <span class="fas fa-truck"></span>
+                                        </li>
+                                        <li id="step-5" class="text-muted green">
+                                            <span class="fas fa-box-open"></span>
+                                        </li>
+                                    </ul>
+                                    <div id="tracker"></div>
+                                </div> 
+                            </div>
+                            <hr style="box-sizing: border-box;">
+                            <div class="d-sm-flex align-items-sm-start justify-content-end">
+                                <% if (order.status == "Cancelled") { %>
+                                <a href="/canceledOrder?id=<%= order._id %>" class="text-decoration-none d-flex align-items-end">
+                                <div style="display: none;" class="btn btn-primary text-uppercase" >Cancel</div>
+                                </a>
+                                <% }else if(order.status=='Delivered'){%>
+                                    <a href="#" class="text-decoration-none d-flex align-items-end">
+                                        <div style="display: none;" class="btn btn-primary text-uppercase" >Cancel</div>
+                                        </a>
+                                <%}
+                                else{%>
+                                    <a href="/canceledOrder?id=<%= order._id %>" class="text-decoration-none d-flex align-items-end">
+                                        <div class="btn btn-primary text-uppercase" >Cancel</div>
+                                        
+                                        </a>
+                                        <%} %>
+                            </div>
+                        </div>
+                    </div>
+                    <% }); %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<%- include('../layouts/header.ejs') %> 

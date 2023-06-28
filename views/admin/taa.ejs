@@ -1,0 +1,197 @@
+<!-- const conformOrder = async (req, res) => {
+  try {
+      console.log("Confirm order inside");
+      const userId = req.session.userId;
+      const { addressForDelivery, payment } = req.body;
+      const couponCode = req.body.couponCode || ''
+      let couponAvailable;
+      let subtotal = 0;
+      var couponAmount = 0;
+      let currentDate = new Date();
+
+      if (couponCode) {
+          console.log("coupon")
+          couponAvailable = await couponModel.findOne({ code: couponCode })
+          const userCartData = await cartModel.findOne({ userid: userId }).populate("product.product_id")
+          if (userCartData && userCartData.product && userCartData.product.length > 0) {
+              for (const cartItem of userCartData.product) {
+                  const product = cartItem.product_id;
+                  const productPrice = product.price * cartItem.productQuantity;
+                  subtotal += productPrice;
+              }
+
+              let couponValue = couponAvailable.couponAmount;
+              subtotal = subtotal - couponValue
+          }
+      }
+      console.log(subtotal)
+
+      const allcategory = await categoryModel.find({});
+      const currentAddress = await addressModel.find({ userid: userId });
+      const matchingAddress = currentAddress.find(
+          (address) => address._id.toString() === addressForDelivery
+      );
+      const cart = await cartModel.findOne({ userid: userId });
+      const productIdOnly = cart.product.map((i) => i.product_id);
+      const productIdAndQuantity = cart.product.map((i) => {
+          const productId = i.product_id;
+          const productQuantity = i.productQuantity;
+          return { productQuantity, productId };
+      });
+      const productAllDetails = await productModel
+          .find({ _id: { $in: productIdOnly } })
+          .populate("category_id");
+      const totalQuantity = cart.product.reduce(
+          (total, product) => total + product.productQuantity,
+          0
+      );
+      const totalAmount = productAllDetails.reduce((total, product) => {
+          const productQuantity = productIdAndQuantity.find(
+              (item) => item.productId.toString() === product._id.toString()
+          ).productQuantity;
+          return total + product.price * productQuantity;
+      }, 0);
+      var expectedDeliveryDate = new Date();
+      expectedDeliveryDate.setDate(expectedDeliveryDate.getDate() + 4);
+
+      let couponCoded
+      let ordercount=0
+      if(couponAvailable){
+          couponAvailable.code 
+          couponCoded=couponAvailable.code ?couponAvailable.code:"not available"
+      }
+      if(totalAmount||subtotal){
+          ordercount=totalAmount?totalAmount:subtotal
+      }
+
+      console.log(couponCoded)
+      console.log(ordercount)
+      let newOrder = new orderModel({
+          userId: userId,
+          products: productIdAndQuantity.map((item) => ({
+              product_id: item.productId,
+              Quantity: item.productQuantity,
+          })),
+          total: subtotal?subtotal:totalAmount,
+          totalQuantity: totalQuantity,
+          coupon: couponCoded, // Fill this with the coupon value if applicable
+          paymentMethod: payment,
+          status: "Pending",
+          address: matchingAddress._id,
+          orderDate: currentDate,
+          paymentStatus: payment == "Net Banking" ? "Paid" : "Unpaid",
+          orderNumber: generateOrderNumber(),
+          expectedDeliveryDate: expectedDeliveryDate,
+      });
+
+      const savedOrder = await newOrder.save();
+      console.log(savedOrder)
+      const productIds = productIdAndQuantity.map((item) => item.productId);
+      const productsToUpdate = await productModel.find({ _id: { $in: productIds } });
+      // Update the product stock based on the ordered quantities
+      for (let i = 0; i < productsToUpdate.length; i++) {
+          const productToUpdate = productsToUpdate[i];
+
+          const orderedQuantity = Number(productIdAndQuantity.find((item) => item.productId.toString() === productToUpdate._id.toString()).productQuantity);
+
+          for (let i = 0; i < productsToUpdate.length; i++) {
+              const productToUpdate = productsToUpdate[i];
+              const orderedQuantity = Number(productIdAndQuantity.find((item) => item.productId.toString() === productToUpdate._id.toString()).productQuantity);
+
+              if (!isNaN(orderedQuantity) && orderedQuantity > 0) {
+                  const currentQuantity = productToUpdate.productQuantity;
+                  let updatedQuantity;
+
+                  if (typeof currentQuantity === 'number') {
+                      updatedQuantity = currentQuantity - orderedQuantity;
+                  } else if (typeof currentQuantity === 'string') {
+                      updatedQuantity = Number(currentQuantity) - orderedQuantity;
+                  }
+
+                  await productModel.findOneAndUpdate(
+                      { _id: productToUpdate._id },
+                      { $set: { productQuantity: updatedQuantity.toString() } }
+                  );
+              }
+          }
+      }
+
+      const data = {
+          matchingAddress,
+          order: savedOrder,
+          totalAmount: totalAmount,
+          totalQuantity: totalQuantity,
+          allcategory: allcategory,
+          products: productAllDetails,
+      };
+
+      res.render("users/orderConformation", { data });
+  } catch (error) {
+      console.error(error);
+  }
+};
+
+
+const couponCode= req.body.couponCode || '';
+let couponAvailable;
+let currentAmount=0;
+let currentdate = new Date();
+
+
+if(couponCode){
+  console.log('coupon');
+  couponAvailable=await couponModel.findOne({couponName:couponCode})
+  const userCartData = await cartModel.findOne({ userid: userId }).populate("product.productId")
+      if (userCartData && userCartData.product && userCartData.product.length > 0) {
+          for (const cartItem of userCartData.product) {
+              const product = cartItem.productId;
+              const productPrice = product.price * cartItem.quantity;
+              subtotal += productPrice;
+            }
+
+            let couponValue = couponAvailable.couponAmount;
+            subtotal = subtotal - couponValue
+        }
+}
+console.log(subtotal) -->
+
+ 
+<!--Pagination 4-->
+       
+<div class="col-lg-12">
+    <div class="pagination">
+<nav class="Pager4" aria-label="pagination example">
+    <ul class="pagination pagination-circle justify-content-center">
+        <% if (currentPage > 1) { %>
+        <!--Arrow left-->
+        <li class="page-item disabled">
+            <a  href="/home?page=<%= currentPage - 1 %>" class="page-link prev" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only"><<</span>
+            </a>
+        </li>
+        <% } %>
+          
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                  <% if (i === currentPage) { %>
+        <!--Numbers-->
+        <li class="page-item active"><a class="page-link"><%= i %></a></li>
+        <% } else { %>
+        <li class="page-item" href="/home?page=<%= i %>"><a class="page-link"><%= i %></a></li>
+        <% } %>
+        <% } %>
+        <% if (currentPage < totalPages) { %>
+
+        <!--Arrow right-->
+        <li class="page-item">
+            <a href="/home?page=<%= currentPage + 1 %>" class="page-link next" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+                <span class="sr-only">>></span>
+            </a>
+        </li>
+        <% } %>
+    </ul>
+</nav>  
+</div>
+</div>
+  

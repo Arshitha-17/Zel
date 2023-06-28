@@ -1,0 +1,316 @@
+
+<%- include('../layouts/header.ejs') %> 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="css/productDetail.css">
+    <!-- Topbar Start -->
+    <div class="container-fluid px-0 d-none d-lg-block">
+        <div class="row gx-0">
+            <div class="col-lg-4 text-center bg-secondary py-3">
+                <div class="d-inline-flex align-items-center justify-content-center">
+                    <i class="bi bi-envelope fs-1  me-3" style="color: #E88F2A;"></i>
+                    <div class="text-start">
+                        <h6 class="text-uppercase mb-1">Email Us</h6>
+                        <span>zelcakes@gamil.com</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center  border-inner py-3" style="background-color: #E88F2A;">
+                <div class="d-inline-flex align-items-center justify-content-center">
+                    <a href="index.html" class="navbar-brand">
+                        <h1 class="m-0 text-uppercase text-white"><i class="fa fa-birthday-cake fs-1 text-dark me-3"></i>ZEL CAKES</h1>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center bg-secondary py-3">
+                <div class="d-inline-flex align-items-center justify-content-center">
+                    <i class="bi bi-phone-vibrate fs-1  me-3"  style="color: #E88F2A;"></i>
+                    <div class="text-start">
+                        <h6 class="text-uppercase mb-1">Call Us</h6>
+                        <span>7034430171</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Topbar End -->
+
+      <!-- Navbar Start -->
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark shadow-sm py-3 py-lg-0 px-3 px-lg-0" style="position: sticky; top: 0; z-index: 100; font-family: 'Oswald', sans-serif; font-size: 18px;">
+        <a href="index.html" class="navbar-brand d-block d-lg-none">
+            <h1 class="m-0 text-uppercase text-white"><i class="fa fa-birthday-cake fs-1 text-primary me-3"></i>ZEL CAKES</h1>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <div class="navbar-nav ms-auto mx-lg-auto py-0">
+            <a href="/home" class="nav-item nav-link active">Home</a>
+            <a href="about.html" class="nav-item nav-link">About Us</a>
+            <div class="navbar-nav ms-auto mx-lg-auto py-0" style="padding-left: 70px;">
+            <% category.forEach(function(category) { %>
+            <a href="/categorySorting?id=<%= category._id %>" class="nav-item nav-link"><%= category.category %></a>
+            <% }); %>
+                <!-- <a href="contact.html" class="nav-item nav-link">Contact Us</a> -->
+                <li style="padding: 30px; color: aliceblue;"><a href="wishlist"><i class="fa-sharp fa-solid fa-heart"></i></a> </li>
+                
+                <li style="padding: 30px;"><a href="userProfile"><i class="fa-solid fa-user"></i></a> </li>
+                
+                <li style="padding: 30px;"><a href="cart?id=<%= product._id %>" ><i class="fa-solid fa-cart-shopping" ><span id="cartCount" class="cart-count" >0</span></i></a> </li>
+              </div>
+                <a href="/logout" class="nav-item nav-link" style="margin-left: 250px;">Logout</a>
+            </div>
+        </div>
+    </nav>
+    <!-- Navbar End -->
+
+<!-- product Detail Pages -->
+
+<div class="container mt-5 mb-5">
+  <div class="card">
+    <div class="row g-0">
+      <div class="col-md-6 border-end">
+        <div class="d-flex flex-column justify-content-center">
+          <div class="main_image">
+            <% if (product && product.image && product.image[1]) { %>
+              <img
+                src="/images/<%= product.image[1] %>"
+                id="main_product_image"
+                width="350"
+                class="zoom"
+                data-zoom-image="/images/<%= product.image[1] %>"
+              />
+            <!-- <% } else { %>
+              <p>No image available</p>
+            <% } %> -->
+          </div>
+          <div class="thumbnail_images">
+            <ul id="thumbnail">
+              <% if (product && product.image) {
+                product.image.forEach(function(image) { %>
+                  <li>
+                    <img onclick="changeImage(this)" src="/images/<%= image %>" width="70" />
+                  </li>
+                <% });
+              } %>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="p-3 right-side">
+          <div class="d-flex justify-content-between align-items-center">
+            <% if (product && product.name) { %>
+              <h3><%= product.name %></h3>
+            <% } else { %>
+              <h3>Product Name</h3>
+            <% } %>
+            <span class="heart"><i class="bx bx-heart"></i></span>
+          </div>
+          <div class="d-flex">
+            <h4  id="realPrice" style="margin-right: 14px;" >₹<span id="realAmount"><%= product.price %></span></h4>
+            <h4  id="offerPrice" class="text-success" ></h4>
+            <input type="hidden" id="getOfferPrice"> 
+          </div>
+          <div class="ratings d-flex flex-row align-items-center">
+              <h5 id="productCategory"><%= product.category %></h5>
+          </div>
+            <p style="font-size: small;"><%= product.description %></p>    
+          <div>
+            <% if (product.stock<=10 && product.stock>0) { %>
+              <p style="color: rgb(171, 6, 6);">only <%= product.stock %> left</p>
+            <% } %> 
+          </div>
+          
+          <div class="sizes mt-5">
+            <h6 class="">Weight</h6>
+            <form action="/productDetails" method="post">
+              <label class="radio">
+                <input type="radio" name="weight" value="1" onchange="getValue()" />
+                <span>500g</span>
+              </label>
+              <label class="radio">
+                <input type="radio" name="weight" value="2" onchange="getValue()" />
+                <span>1Kg</span>
+              </label>
+              <label class="radio">
+                <input type="radio" name="weight" value="4" onchange="getValue()" />
+                <span>2Kg</span>
+              </label>
+              <label class="radio">
+                <input type="radio" name="weight" value="6" onchange="getValue()" />
+                <span>3Kg</span>
+              </label>
+              <input type="hidden" value="<%= product && product._id %>" name="prodId">
+              <input type="hidden"  name="price" id="price">
+              
+
+
+              <div class="cart mt-4 align-items-center">
+               <a href="#" onclick="wishlist(event,'<%=product._id%>')"><i id="wishlist" class="fa fa-heart text-muted "></i></a> 
+                <i class="fa fa-share-alt text-muted"></i>
+              </div>
+            </form>
+          </div>
+          <div class="buttons d-flex flex-row mt-5 gap-3">
+            <% if(product.stock==0){%>
+              <!-- <button disabled class="btn btn-outline-dark ">Buy Now</button> -->
+              <button disabled id="cartButton" class="btn btn-dark add-to-basket" data-product-id="<%= product._id %>">Add to Basket</button>
+            <%}else{%>
+              <!-- <button class="btn btn-outline-dark">Buy Now</button> -->
+              <button id="cartButton" class="btn btn-dark add-to-basket" data-product-id="<%= product._id %>">Add to Basket</button>
+            <%}%>
+           
+          </div>
+          <div><% if(product.stock==0){%>
+            <p style="color: rgb(171, 6, 6);">Out of stock</p></div>
+            <%}%>
+          <div class="search-option">
+            <i class="bx bx-search-alt-2 first-search"></i>
+            <div class="inputs"><input type="text" name="" /></div>
+            <i class="bx bx-share-alt share"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  function changeImage(element) {
+    var main_prodcut_image = document.getElementById("main_product_image");
+    main_prodcut_image.src = element.src;
+  }
+</script>
+
+<script>
+  var cartCount=0;
+  var cartButton=document.querySelector('#cartButton')
+  var cartCountElement=document.querySelector('#cartCount');
+  cartButton.addEventListener('click',function(){
+    cartCount=+1;
+    cartCountElement.textContent=cartCount;
+  })
+</script>
+
+<script>
+  $(document).ready(function(){
+    $('#cartButton').click(function(){
+      let price = document.getElementById('price').value
+      console.log(price);
+      addToCart('<%=product._id %>',price);
+    });
+    function addToCart(productId,price){
+      $.ajax({
+        
+        url:'/cart',
+        method:'POST',
+        data:{productId:productId,price:price},
+        success:function(response){
+          console.log('add to cart');
+          alert('product add to cart');
+          var cartCount=parseInt($('#cartCount').text())
+          $('#cartCount').text(cartCount=+1)
+        },
+        error:function(error){
+          console.error('error occured',error)
+        }
+      })
+    }
+  })
+
+  function wishlist(event,productId){
+    event.preventDefault();
+    fetch('/wishlist',{
+      method:'POST',
+      headers:{
+        'Content-type':'application/json',
+      },
+      body:JSON.stringify({productId})
+    }).then((response)=>response.json())
+    .then((data)=>{
+      console.log(data);
+      
+    }).catch((error)=>{
+      console.error(error);
+    })
+  }
+</script>
+
+<% include('../layouts/footer.ejs') %>
+
+<!-- Include jQuery from a CDN -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Include ElevateZoom from a CDN -->
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
+
+<!-- Initialize ElevateZoom -->
+<!-- Initialize ElevateZoom -->
+<script>
+    $(document).ready(function() {
+      $('.zoom').elevateZoom({
+        zoomType: 'inner',
+        cursor: 'crosshair',
+        gallery: 'gallery_01',
+        galleryActiveClass: 'active',
+        imageCrossfade: true,
+        loadingIcon: 'path/to/loading.gif'
+        // Additional options can be added here
+      });
+    });
+  </script>
+
+
+<!-- category offer -->
+  <script>
+    let allCategory=JSON.parse(decodeURIComponent('<%=categories%>'))
+    let category= document.getElementById('productCategory');
+    let price = document.getElementById('price');
+    let realPrice = document.getElementById('realPrice');
+    let offerPrice = document.getElementById('offerPrice');
+    let getOfferPrice= document.getElementById('getOfferPrice')
+    let realAmount = document.getElementById('realAmount').innerText //original Price
+    let productCategory= allCategory.find(cat=> cat.category==category.innerText)
+    if(productCategory.categoryOffer>0){
+      realPrice.style.textDecoration='line-through'
+      realPrice.style.textDecorationThickness='2px'
+      let newPrice= Number(realAmount)- Number(productCategory.categoryOffer)
+      offerPrice.innerHTML=newPrice
+      getOfferPrice.value=newPrice
+      price.value=newPrice
+      console.log(price);
+    }else{
+      price.value=realAmount;
+    }
+  </script>
+
+  <!-- weight changing -->
+<script>
+  function getValue() {
+    // Get the selected radio button
+    var radioButtons = document.getElementsByName("weight");
+    var categoryPrice = document.getElementById('offerPrice')
+    var getOfferPrice=document.getElementById('getOfferPrice').value
+    let price = document.getElementById('price');
+    var selectedValue;
+
+    for (var i = 0; i < radioButtons.length; i++) {
+      if (radioButtons[i].checked) {
+        selectedValue = radioButtons[i].value;
+        break;
+      }
+    } 
+
+    // Display the selected value
+    console.log("Selected Value: " + selectedValue);
+    let categoryNewPrice=Number(getOfferPrice)*Number(selectedValue)
+    categoryPrice.innerText=categoryNewPrice
+    price.value= categoryNewPrice
+    console.log(price.value);
+
+  }
+</script>
+
+  <script src="https://kit.fontawesome.com/5f6d1ef682.js" crossorigin="anonymous"></script>

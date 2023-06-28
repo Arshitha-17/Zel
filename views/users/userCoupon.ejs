@@ -1,0 +1,108 @@
+
+<%- include('../layouts/header.ejs') %> 
+<link rel="stylesheet" href="/assets/coupon.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Topbar Start -->
+    <div class="container-fluid px-0 d-none d-lg-block">
+        <div class="row gx-0">
+            <div class="col-lg-4 text-center bg-secondary py-3">
+                <div class="d-inline-flex align-items-center justify-content-center">
+                    <i class="bi bi-envelope fs-1  me-3" style="color: #E88F2A;"></i>
+                    <div class="text-start">
+                        <h6 class="text-uppercase mb-1">Email Us</h6>
+                        <span>zelcakes@gamil.com</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center  border-inner py-3" style="background-color: #E88F2A;">
+                <div class="d-inline-flex align-items-center justify-content-center">
+                    <a href="index.html" class="navbar-brand">
+                        <h1 class="m-0 text-uppercase text-white"><i class="fa fa-birthday-cake fs-1 text-dark me-3"></i>ZEL CAKES</h1>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center bg-secondary py-3">
+                <div class="d-inline-flex align-items-center justify-content-center">
+                    <i class="bi bi-phone-vibrate fs-1  me-3"  style="color: #E88F2A;"></i>
+                    <div class="text-start">
+                        <h6 class="text-uppercase mb-1">Call Us</h6>
+                        <span>7034430171</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Topbar End -->
+
+      <!-- Navbar Start -->
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark shadow-sm py-3 py-lg-0 px-3 px-lg-0" style="position: sticky; top: 0; z-index: 100; font-family: 'Oswald', sans-serif; font-size: 18px;">
+        <a href="index.html" class="navbar-brand d-block d-lg-none">
+            <h1 class="m-0 text-uppercase text-white"><i class="fa fa-birthday-cake fs-1 text-primary me-3"></i>ZEL CAKES</h1>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <div class="navbar-nav ms-auto mx-lg-auto py-0">
+            <a href="/home" class="nav-item nav-link active">Home</a>
+            <a href="about.html" class="nav-item nav-link">About Us</a>
+            <div class="navbar-nav ms-auto mx-lg-auto py-0" style="padding-left: 70px;">
+            <% category.forEach(function(category) { %>
+            <a href="/categorySorting?id=<%= category._id %>" class="nav-item nav-link"><%= category.category %></a>
+            <% }); %>
+                <!-- <a href="contact.html" class="nav-item nav-link">Contact Us</a> -->
+                <li style="padding: 30px; color: aliceblue;"><a href="cart.html"><i class="fa-sharp fa-solid fa-heart"></i></a> </li>
+                
+                <li style="padding: 30px;"><a href="cart.html"><i class="fa-solid fa-user"></i></a> </li>
+                
+                <li style="padding: 30px;"><a href="cart" ><i class="fa-solid fa-cart-shopping" ><span id="cartCount" class="cart-count" >0</span></i></a> </li>
+              </div>
+                <a href="/logout" class="nav-item nav-link" style="margin-left: 250px;">Logout</a>
+            </div>
+        </div>
+    </nav>
+    <!-- Navbar End -->
+
+<!-- Coupon Starts -->
+
+<div class="container p-5 mt-4">
+  
+    <% coupon.forEach(function(coupon){%>
+      <div class="coupon ">
+          <div class="left">
+            <div style="color: black;">ENJOY YOUR GIFT</div>
+          </div>
+          <div class="center">
+            
+            <div>
+              <h2>₹<%= coupon.couponAmount%></h2>
+              <h3 style="color: black;">COUPON</h3>
+              <h4 style="color: black;"><%=coupon.couponName%></h4>
+              <small style="color: black;">VALID UNTIL <%= coupon.couponExprireDate.toDateString() %></small>
+            </div>
+          </div>
+          
+          <div class="right">
+            <div >7034430171</div>
+          </div>
+          
+        </div>
+      <%})%>
+    
+  </div>
+
+  <% include('../layouts/footer.ejs') %>
+
+<!-- Include jQuery from a CDN -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Include ElevateZoom from a CDN -->
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
+
+
+<!-- Initialize ElevateZoom -->
+<!-- Initialize ElevateZoom -->
+
+  <script src="https://kit.fontawesome.com/5f6d1ef682.js" crossorigin="anonymous"></script>

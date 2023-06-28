@@ -1,0 +1,170 @@
+<%- include('../layouts/header.ejs') %> 
+
+<link rel="stylesheet" href="css/addtoCart.css">
+    
+
+
+<!-- product Detail Pages -->
+
+<!-- product Detail Pages -->
+
+<body>
+    <div class="card">
+      <div class="row">
+        <div class="col-md-8 cart">
+          <div class="title">
+            <div class="row">
+              <div class="col">
+                <h4><b>Shopping Cart</b></h4>
+              </div>
+            </div>
+          </div>
+  
+          <% if (!userCartData || userCartData.product.length === 0) { %>
+            <h5><b>No products in the cart.</b></h5>
+          <% } else { %>
+            <% let totalPrice = 0; %>
+            <% for (const cartItem of userCartData.product) { %>
+              <% const product = cartItem.productId; %>
+              
+              <div class="row border-top border-bottom">
+                <div class="row main align-items-center">
+                  <div class="col-2">
+                    <img src="/images/<%= product.image[0] %>" alt="Product Photo">
+                  </div>
+                  <div class="col">
+                    <div class="row" style="text-transform: capitalize;">
+                      <%= product.name%>
+              
+                    </div>
+                  
+                  </div>
+                  <div class="col">
+                    <a href="#" class="quantity-change" data-product-id="<%= product._id %>" data-increment="-1">-</a>
+                    <span class="product-quantity" data-product-id="<%= product._id %>"><%= cartItem.quantity %></span>
+                    <a href="#" class="quantity-change" data-product-id="<%= product._id %>" data-increment="1">+</a>
+                  </div>
+                  <div class="col">₹<%=cartItem.newPrice %><span class="close"><a href="/deleteproduct?deleteId=<%= product._id %>">&#10005;</a></span></div>
+                </div>
+              </div>
+              <% totalPrice += product.price; %>
+              <% let totalPriceNumber = parseFloat(totalPrice); %>
+              
+            
+            <% } %>
+            <div class="back-to-shop">
+              <a href="/home">&leftarrow; <span class="text-muted">Back to Shop</span></a>
+            </div>
+          <% } %>
+        </div>
+        <div class="col-md-4 summary">
+          <div>
+            <h5><b>Summary</b></h5>
+          </div>
+          <hr>
+          <% if (userCartData && userCartData.product && userCartData.product.length > 0) { %>
+            <div class="row">
+              <div class="col" style="padding-left: 0;">Subtotal Count: <%= userCartData.product.length %></div>
+            </div>
+            <form>
+              <p>SHIPPING</p>
+              <select>
+                <option class="text-muted">Standard-Delivery- &euro;5.00</option>
+              </select>
+              <p>GIVE CODE</p>
+              <!-- <input id="code" placeholder="Enter your code"> -->
+              <!-- <p id="message"></p> -->
+              <div class="row" style="border-top: 1px solid rgba(0, 0, 0, .1); padding: 2vh 0;">
+                <div class="col">TOTAL PRICE: ₹<%= totalPrice %></div>
+              </div>
+              <a href="/address?total=<%=totalPrice%>" class="btn" id="checkout-btn">CHECKOUT</a>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </body>
+  
+
+
+
+  <script>
+    function changeImage(element) {
+      var main_prodcut_image = document.getElementById("main_product_image");
+      main_prodcut_image.src = element.src;
+    }
+  </script>
+  
+  
+  
+  <% include('../layouts/footer.ejs') %>
+  
+  <!-- Include jQuery from a CDN -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+  <script>
+    $(document).ready(function() {
+      // Handle quantity change
+      $(document).on('click', '.quantity-change', function(e) {
+        e.preventDefault();
+        var productId = $(this).data('product-id');
+        var increment = parseInt($(this).data('increment'));
+        var quantityElement = $('.product-quantity[data-product-id="' + productId + '"]');
+        var currentQuantity = parseInt(quantityElement.text());
+        var newQuantity = parseInt(currentQuantity) + increment;
+  
+        
+        // Update UI with new quantity
+        quantityElement.text(newQuantity);
+  
+        // Send updated quantity to the backend
+        updateQuantity(productId, newQuantity);
+      });
+  
+      // Function to update the quantity in the backend
+      function updateQuantity(productId, quantity) {
+        // Send an AJAX request to the backend endpoint with the updated quantity
+        $.ajax({
+          url: '/updateQuatity', // Replace with your backend endpoint
+          method: 'POST',
+          data: {
+            productId:productId,
+            newQuantity:quantity
+          },
+          success: function(response) {
+          console.log('Quantity updated successfully');
+          if (response.redirect) {
+            // Redirect to the specified URL
+            window.location.href = response.redirect;
+          }
+        },
+          error: function(error) {
+            // Handle error response from the backend
+            console.error('Failed to update quantity:', error);
+          }
+        });
+      }
+    });
+  </script>    
+  
+  <!-- <script>
+      const codeinput=document.getElementById('code');
+      codeinput.addEventListener('input',validateCode);
+      function validateCode(){
+          const enteredCode=codeinput.value.trim();
+          fetch('/checkCouponAvailable',{
+              method:'POST',
+              headers:{
+                  'Content-Type':'application/json'
+              },body:JSON.stringify({code:enteredCode})
+          }).then(response=>response.json())
+          .then(data=>{
+              if(data.available){
+                  console.log('code ok')
+              }else{
+                  console.log('not available');
+              }
+          }).catch(error=>{
+              console.error(error)
+          })
+      }
+  </script> -->

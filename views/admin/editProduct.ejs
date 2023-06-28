@@ -1,0 +1,96 @@
+<%- include('../layouts/header.ejs') %>
+
+<nav class=" navbar navbar-expand-lg navbar-light bg-light">
+    <a class="  navbar-brand" href="#" style="padding-left: 15px; font-family: Merriweather " ><h4><strong>ZEL CAKES</strong></h4></a>
+    <!-- <img src="/public/images/zel_logo.jpg"  width="45" height="45" alt=""> -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" style="padding-right: 15px; margin-right: 10px;" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item active " >
+          <a href="/admin/adminProductList" class="m-2" style="text-decoration: none; color: black;">Product</a>
+          
+        </li>
+        <li class="nav-item">
+          <a href="/admin/userList" class="m-2" style="text-decoration: none; color: black;" >Users
+          </a>
+          
+        </li>
+        <li class="nav-item">
+          <a href="/admin/adminlogout" class="m-2" style="text-decoration: none; color: black;" >Users
+          </a>
+          
+        </li>
+          
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+<div class="m-5 pt-5">
+    <h2>Edit Product</h2>
+    <form action="/admin/editProduct?id=<%= editProduct._id %>" method="post" enctype="multipart/form-data">
+
+    <div class="form-group my-3">
+        <label for="nameInput">Name</label>
+        <input type="text" class="form-control form-control-sm" id="nameInput" name="name" value="<%= editProduct.name %>" placeholder="Enter Name" required>
+    </div>
+    <div class="form-group my-3">
+        <label for="nameInput">Price</label>
+        <input type="text" class="form-control form-control-sm" id="nameInput" name="price" value="<%= editProduct.price %>" placeholder="Enter Name" required>
+    </div>
+    <div class="form-group my-3 d-flex">
+        <label for="dropdownMenuButton" class="pt-2 me-2">Category:</label>
+        <div>
+            <select class="form-select form-select-sm" name="category" aria-label="Default select example">
+                <option >Categories</option>
+                <% categoryList.forEach(function(item) { %>
+                    <option selected default value="<%= item.category %>"><%= item.category %></option>
+                <% }); %>
+            </select>
+        </div>
+    </div>
+    <div class="form-group my-3">
+      <label for="nameInput">Stock</label>
+      <input type="text" class="form-control form-control-sm" id="nameInput" name="stock" placeholder="Enter Stock" required>
+  </div>
+    <div class="form-group my-3">
+        <label for="descriptionInput">Description</label>
+        <textarea class="form-control form-control-sm" id="descriptionInput" name="description" rows="3" required><%= editProduct.description %></textarea>
+    </div>
+    <div class="form-group my-3">
+        <label for="productImage">Add image: </label>
+        <div class="d-flex my-2">
+            <% editProduct.image.forEach(function(image) { %>
+                <img src="/images/<%= image %>" alt="image" id="imagePreview" style="width: 100px; height: 100px" class="preview-image me-2 border border-dark">
+            <% }); %>
+        </div>
+    </div>
+        <input type="file" class="form-control-file" name="image" id="productImage" onchange="viewImage(event)" multiple>
+    </div>
+
+    <div>
+    </div>
+    <button type="submit" class="btn btn-primary my-3">Update</button>
+    </form>
+
+<% include('../layouts/footer.ejs') %>
+
+
+<script>
+    function viewImage(event) {
+        const previewImages = document.getElementsByClassName('preview-image');
+
+        for (let i = 0; i < event.target.files.length; i++) {
+            const file = event.target.files[i];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                previewImages[i].src = e.target.result;
+            };
+
+            reader.readAsDataURL(file);
+        }
+    }
+</script>

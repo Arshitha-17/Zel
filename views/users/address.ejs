@@ -1,0 +1,407 @@
+<link href="img/favicon.ico" rel="icon">
+
+<!-- Google Web Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Oswald:wght@500;600;700&family=Pacifico&display=swap" rel="stylesheet"> 
+
+<!-- Icon Font Stylesheet -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+<!-- Libraries Stylesheet -->
+<link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+<!-- Customized Bootstrap Stylesheet -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Template Stylesheet -->
+<link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+<!-- Topbar Start -->
+<div class="container-fluid px-0 d-none d-lg-block">
+    <div class="row gx-0">
+        <div class="col-lg-4 text-center bg-secondary py-3">
+            <div class="d-inline-flex align-items-center justify-content-center">
+                <i class="bi bi-envelope fs-1  me-3" style="color: #E88F2A;"></i>
+                <div class="text-start">
+                    <h6 class="text-uppercase mb-1">Email Us</h6>
+                    <span>zelcakes@gmail.com</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 text-center  border-inner py-3" style="background-color: #E88F2A;">
+            <div class="d-inline-flex align-items-center justify-content-center">
+                <a href="index.html" class="navbar-brand">
+                    <h1 class="m-0 text-uppercase text-white"><i class="fa fa-birthday-cake fs-1 text-dark me-3"></i>ZEL CAKES</h1>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-4 text-center bg-secondary py-3">
+            <div class="d-inline-flex align-items-center justify-content-center">
+                <i class="bi bi-phone-vibrate fs-1  me-3"  style="color: #E88F2A;"></i>
+                <div class="text-start">
+                    <h6 class="text-uppercase mb-1">Call Us</h6>
+                    <span>7034430171</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Topbar End -->
+
+
+<!-- Navbar Start -->
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark shadow-sm py-3 py-lg-0 px-3 px-lg-0">
+    <a href="index.html" class="navbar-brand d-block d-lg-none">
+        <h1 class="m-0 text-uppercase text-white"><i class="fa fa-birthday-cake fs-1 text-primary me-3"></i>ZEL CAKES</h1>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav ms-auto mx-lg-auto py-0">
+            <a href="/home" class="nav-item nav-link active">Home</a>
+            <a href="about.html" class="nav-item nav-link">About Us</a>
+            <div class="navbar-nav ms-auto mx-lg-auto py-0" style="padding-left: 70px;">
+            <% category.forEach(function(category) { %>
+            <a href="/categorySorting?id=<%= category._id %>" class="nav-item nav-link"><%= category.category %></a>
+            <% }); %>
+            <li style="padding: 30px; color: aliceblue;"><a href="wishlist"><i class="fa-sharp fa-solid fa-heart"></i></a> </li>
+            
+            <li style="padding: 30px;"><a href="userProfile"><i class="fa-solid fa-user"></i></a> </li>
+            
+            <li style="padding: 30px;"><a href="cart" ><i class="fa-solid fa-cart-shopping" ><span id="cartCount" class="cart-count" >0</span></i></a> </li>
+      
+        </div>
+            
+            <i class="fa-solid fa-cart-shopping"></i>
+            <a href="/logout" class="nav-item nav-link" style="margin-left: 250px;">Logout</a>
+        </div>
+    </div>
+
+</nav>
+<!-- Navbar End -->
+
+
+<body>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 mt-5 p-1">
+                <div class="card mb-1">
+                    <div class="card-header py-3">
+                        <h5 class="mb-1">Delivery Address</h5>
+                    </div>
+                    
+                    <div class="card-body">
+                        <!-- FORM STARTS  -->
+                        <form class="pay-form">
+
+                            <div class="form-outline mb-1">
+                                <input type="text" disabled id="form7Example3" name="name" class="form-control"
+                                    value="<%= currentAddress.name %>" required />
+                            </div>
+
+                            <!-- Text input -->
+                            <div class="form-outline mb-1">
+                                <input type="tel" disabled id="form7Example4" name="phone" 
+                                    class="form-control" value="<%= currentAddress.phone %>" required />
+                            </div>  
+
+                            <!-- Address input -->
+                            <div class="d-flex row">
+                                <div class="form-outline col-md-8">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+
+                                                <th>Select Address</th>
+                                                <th>Name</th>
+                                                <th>Address</th>
+                                                <th>State</th>
+                                                <th>Phone</th>
+                                                
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                          <% currentAddress.forEach(function(currentAddress) { %>      
+                                                <tr>
+      
+                                                   
+                                                    <td >
+                                                        <ul class="list-group list-group-flush">
+                                                            <li
+                                                                class="list-group-item d-flex justify-content-between align-items-center border-bottom px-0">
+                                                                <input type="radio" name="addressForDelivery" id="cashpayment" value="<%=currentAddress._id%>" required>
+                                                            </li>
+                                                        </ul>
+                                                    </td>
+
+                                                    <td style="text-transform: capitalize; padding: 20px">
+                                                      <%= currentAddress.name %>
+                                                    </td>
+                                                    <td style="text-transform: capitalize;  padding: 20px">
+                                                      <%= currentAddress.address %>
+                                                    </td>
+                                                    <td style="text-transform: capitalize;  padding: 20px">
+                                                      <%= currentAddress.state   %>
+                                                    </td>
+                                                    <td style="text-transform: capitalize;  padding: 20px">
+                                                      <%= currentAddress.phone %>
+                                                    </td>
+                                                   
+                                                   
+                                                </tr>
+                                                <% }); %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="d-flex align-items-center mx-2 col-md-3">
+                        <a href="/addMoreAddress" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addAddress">Add
+                            Address</a>
+                    </div>
+                </div>
+
+            <div class="col-md-4 mt-5 pt-1">
+                <div class="card mb-4">
+                    <div class="card-header py-3">
+                        <h5 class="mb-0">Payment Method</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li
+                                class="list-group-item d-flex justify-content-between align-items-center border-bottom px-0">
+                                <label for="cashpayment">Cash on Delivery</label>
+                                <input type="radio" name="payment" id="cashpayment" value="Cash on Delivery" required>
+                            </li>
+                            <li
+                                class="list-group-item d-flex justify-content-between align-items-center border-bottom px-0">
+                                <label for="netpayment">Net Banking</label>
+                                <input type="radio" name="payment" id="netpayment" value="Net Banking" required>
+                            </li>
+                            <li
+                                class="list-group-item d-flex justify-content-between align-items-center border-bottom px-0">
+                                <label for="netpayment">Wallet</label>
+                                <input type="radio" name="payment" id="walletpayment" value="Wallet" required>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mb-4">
+                    <div class="card-header py-3">
+                        <h5 class="mb-0">Summary</h5>
+                    </div>
+                    <div class="card-body p-1">
+                    
+                            <p>GIVE CODE</p>
+                            <input id="code" name="couponCode" placeholder="Enter your code">
+                            <p id="message" class="text-danger"></p>
+                          
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                                  <span id="totalLabel">Total</span>
+                                  <span id="totalValue"><%= total %></span>
+                                  <input type="hidden" name="total" value="<%= total %>">
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                                    <span>Discount Amount</span>
+                                    <span id="discountLable" style="margin-left: 180px;"></span>
+                                    <span ></span>
+                                   
+                                  </li>
+                                  
+                                                   
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                  Shipping
+                                  <span>Free</span>
+                                </li>
+                              </ul>
+                              
+                        <div class="py-2">
+                            <input  type="submit" id="confirm" class="btn btn-primary btn-sm btn-block"
+                                value="Confirm Order">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+               
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+   $(document).ready(function(){
+    $('.pay-form').submit(function(e){
+        e.preventDefault();
+
+        var paymentMethod = $('input[name="payment"]:checked').val();
+        if (paymentMethod === 'Net Banking') {
+            var formData = $(this).serialize();
+
+            $.ajax({
+                url: "/createOrder",
+                type: "POST",
+                data: formData,
+                success: function(res){
+                    if(res.success){
+                        var options = {
+                            "key": ""+res.key_id+"", // Enter the Key ID generated from the Dashboard
+                            "amount": ""+res.amount+"", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                            "currency": "INR",
+                            "name": "Orders",
+                            "description": "Test Transaction",
+                            "image": "/images/zel_logo.jpg",
+                            "order_id": ""+res.order_id+"", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+                            "handler": function (response){
+                                // Submit the form to a separate route for further processing
+                                var form = $('.pay-form');
+                                var url = form.attr('action');
+                                var method = form.attr('method');
+                                $('<input>').attr({
+                                    type: 'hidden',
+                                    name: 'paymentMethod',
+                                    value: paymentMethod
+                                }).appendTo(form);
+                                form.attr('action', '/confirmOrder');
+                                form.attr('method', 'POST');
+                                form.unbind('submit').submit();
+                                form.attr('action', url);
+                                form.attr('method', method);
+                            },
+                            "prefill": {
+                                "name": ""+res.name+"",
+                                "email": ""+res.email+"",
+                                "contact": ""+res.mobile+""
+                            },
+                            "notes": {
+                                "address": "Razorpay Corporate Office"
+                            },
+                            "theme": {
+                                "color": "green"
+                            }
+                        };
+                        var rzp1 = new Razorpay(options);
+                        rzp1.on('payment.failed', function (response){
+                            alert("Payment Failed");
+                        });
+
+                        rzp1.open();
+                    } else {
+                        alert(res.msg);
+                    }
+                }
+            });
+        } else if (paymentMethod === 'Wallet') {
+            var formData = $(this).serialize();
+
+            // Send AJAX request to check wallet balance
+            $.ajax({
+                url: "/checkWalletBalance",
+                type: "POST",
+                data: formData,
+                success: function(res) {
+                    if (res.sufficientBalance) {
+                        // Sufficient balance in the wallet
+                        var form = $('.pay-form');
+                        var url = form.attr('action');
+                        var method = form.attr('method');
+                        $('<input>').attr({
+                            type: 'hidden',
+                            name: 'paymentMethod',
+                            value: paymentMethod
+                        }).appendTo(form);
+                        form.attr('action', '/confirmOrder');
+                        form.attr('method', 'POST');
+                        form.unbind('submit').submit();
+                        form.attr('action', url);
+                        form.attr('method', method);
+                    } else {
+                        // Insufficient balance in the wallet
+                        alert("Insufficient Balance. Please add funds to your wallet.");
+                    }
+                }
+            });
+        } else {
+            // Redirect to a separate route for non-Net Banking payments
+            var form = $(this);
+            var url = form.attr('action');
+            var method = form.attr('method');
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'paymentMethod',
+                value: paymentMethod
+            }).appendTo(form);
+            form.attr('action', '/confirmOrder');
+            form.attr('method', 'POST');
+            form.unbind('submit').submit();
+            form.attr('action', url);
+            form.attr('method', method);
+        }
+    });
+});
+</script>
+
+
+<script>
+const codeinput = document.getElementById('code');
+const totalLabel = document.getElementById('totalLabel');
+const totalValue = document.getElementById('totalValue');
+const message = document.getElementById('message');
+const discountLables = document.getElementById('discountLable');
+const categoryOffer= JSON.parse(decodeURIComponent("<%=categoryOffer%>"))
+
+codeinput.addEventListener('input', validateCode);
+
+function validateCode() {
+  const enteredCode = codeinput.value.trim();
+  fetch('/checkCouponAvailable', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        code: enteredCode
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.available) {
+        // console.log("its me discount",data.couponAmounts);
+        totalLabel.textContent = 'Subtotal';
+        totalValue.textContent = data.subtotal;
+        discountLables.textContent = data.couponAmounts;
+        message.textContent = '';
+      } else {
+        console.log('not available');
+        totalLabel.textContent = 'Total';
+        totalValue.textContent = '<%= total %>';
+        message.textContent = 'Invalid coupon';
+        console.log("its me total","<%= total %>");
+      }
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
+
+</script>
+    <!-- Template Javascript -->
+<script src="js/main.js"></script>
+<script src="https://kit.fontawesome.com/5f6d1ef682.js" crossorigin="anonymous"></script>

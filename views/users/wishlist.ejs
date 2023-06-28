@@ -1,0 +1,161 @@
+
+<%- include('../layouts/header.ejs') %> 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link href="css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Template Stylesheet -->
+<link rel="stylesheet" href="css/wishlist.css">
+<!-- <link href="css/style.css" rel="stylesheet"> -->
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Topbar Start -->
+    <div class="container-fluid px-0 d-none d-lg-block">
+        <div class="row gx-0">
+            <div class="col-lg-4 text-center bg-secondary py-3">
+                <div class="d-inline-flex align-items-center justify-content-center">
+                    <i class="bi bi-envelope fs-1  me-3" style="color: #E88F2A;"></i>
+                    <div class="text-start">
+                        <h6 class="text-uppercase mb-1">Email Us</h6>
+                        <span>zelcakes@gamil.com</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center  border-inner py-3" style="background-color: #E88F2A;">
+                <div class="d-inline-flex align-items-center justify-content-center">
+                    <a href="index.html" class="navbar-brand">
+                        <h1 class="m-0 text-uppercase text-white"><i class="fa fa-birthday-cake fs-1 text-dark me-3"></i>ZEL CAKES</h1>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center bg-secondary py-3">
+                <div class="d-inline-flex align-items-center justify-content-center">
+                    <i class="bi bi-phone-vibrate fs-1  me-3"  style="color: #E88F2A;"></i>
+                    <div class="text-start">
+                        <h6 class="text-uppercase mb-1">Call Us</h6>
+                        <span>7034430171</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Topbar End -->
+
+      <!-- Navbar Start -->
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark shadow-sm py-3 py-lg-0 px-3 px-lg-0" style="position: sticky; top: 0; z-index: 100; font-family: 'Oswald', sans-serif; font-size: 18px;">
+        <a href="index.html" class="navbar-brand d-block d-lg-none">
+            <h1 class="m-0 text-uppercase text-white"><i class="fa fa-birthday-cake fs-1 text-primary me-3"></i>ZEL CAKES</h1>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <div class="navbar-nav ms-auto mx-lg-auto py-0">
+            <a href="/home" class="nav-item nav-link active">Home</a>
+            <a href="about.html" class="nav-item nav-link">About Us</a>
+            <div class="navbar-nav ms-auto mx-lg-auto py-0" style="padding-left: 70px;">
+            <% category.forEach(function(category) { %>
+            <a href="/categorySorting?id=<%= category._id %>" class="nav-item nav-link"><%= category.category %></a>
+            <% }); %>
+                <!-- <a href="contact.html" class="nav-item nav-link">Contact Us</a> -->
+                <li style="padding: 30px; color: aliceblue;"><a href="wishlist"><i class="fa-sharp fa-solid fa-heart"></i></a> </li>
+                
+                <li style="padding: 30px;"><a href="userProfile"><i class="fa-solid fa-user"></i></a> </li>
+                
+                <li style="padding: 30px;"><a href="/cart" ><i class="fa-solid fa-cart-shopping" ><span id="cartCount" class="cart-count" >0</span></i></a> </li>
+              </div>
+                <a href="/logout" class="nav-item nav-link" style="margin-left: 250px;">Logout</a>
+            </div>
+        </div>
+    </nav>
+    <!-- Navbar End -->
+
+	<div class="cart-wrap">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="main-heading mb-10">My wishlist</div>
+                    <div class="table-wishlist">
+                        <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th width="45%">Product Name</th>
+                                    <th width="15%">Price</th>
+                                    <th width="15%">Stock Status</th>
+                                    <th width="15%"></th>
+                                    <th width="10%"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (wishlist && wishlist.product && wishlist.product.length > 0) { %>
+                                    <% wishlist.product.forEach(function(item) { %>
+                                        <tr>
+                                            <td width="45%">
+                                                <div class="display-flex align-center">
+                                                    <div class="img-product">
+                                                        <img src="/images/<%= item.product_id.image[2] %>" alt="" class="mCS_img_loaded">
+                                                    </div>
+                                                    <div class="name-product">
+                                                        <%= item.product_id.name %>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td width="15%" class="price">₹ <%= item.product_id.price %></td>
+                                            <% if (item.product_id.stock <= 0) { %>
+                                                <td width="15%"><span class="in-stock-box">Out of Stock</span></td>
+                                                <td width="15%"><button style="display: none;" class="round-black-btn small-btn">Add to Cart</button></td>
+                                            <% } else { %>
+                                                <td width="15%"><span class="in-stock-box">In Stock</span></td>
+                                                <td width="15%"><button id="cartButton" class="round-black-btn small-btn" onclick="addToCart('<%= item.product_id._id %>')">Add to Cart</button></td>
+                                            <% } %>
+                                        </tr>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="5" class="text-center">No wishlist products</td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Include jQuery from a CDN -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Include ElevateZoom from a CDN -->
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
+
+
+<!-- Initialize ElevateZoom -->
+<!-- Initialize ElevateZoom -->
+
+  <script src="https://kit.fontawesome.com/5f6d1ef682.js" crossorigin="anonymous"></script>
+  
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <script>
+   function addToCart(productId){
+	fetch('/cart',
+	{
+		method:'POST',
+		headers:{
+			'Content-Type':'application/json',
+		},
+		body:JSON.stringify({productId}),
+	}).then(response=>response.json()).then(data=>{
+		console.log(data);
+	}).catch(error=>{
+		console.error(error)
+	})
+   }
+</script>
+ 
+	

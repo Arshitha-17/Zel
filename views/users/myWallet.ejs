@@ -1,0 +1,192 @@
+
+<%- include('../layouts/header.ejs') %> 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link href="css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Template Stylesheet -->
+<link rel="stylesheet" href="css/wallet.css">
+<!-- <link href="css/style.css" rel="stylesheet"> -->
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Topbar Start -->
+    <div class="container-fluid px-0 d-none d-lg-block">
+        <div class="row gx-0">
+            <div class="col-lg-4 text-center bg-secondary py-3">
+                <div class="d-inline-flex align-items-center justify-content-center">
+                    <i class="bi bi-envelope fs-1  me-3" style="color: #E88F2A;"></i>
+                    <div class="text-start">
+                        <h6 class="text-uppercase mb-1">Email Us</h6>
+                        <span>zelcakes@gamil.com</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center  border-inner py-3" style="background-color: #E88F2A;">
+                <div class="d-inline-flex align-items-center justify-content-center">
+                    <a href="index.html" class="navbar-brand">
+                        <h1 class="m-0 text-uppercase text-white"><i class="fa fa-birthday-cake fs-1 text-dark me-3"></i>ZEL CAKES</h1>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center bg-secondary py-3">
+                <div class="d-inline-flex align-items-center justify-content-center">
+                    <i class="bi bi-phone-vibrate fs-1  me-3"  style="color: #E88F2A;"></i>
+                    <div class="text-start">
+                        <h6 class="text-uppercase mb-1">Call Us</h6>
+                        <span>7034430171</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Topbar End -->
+
+      <!-- Navbar Start -->
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark shadow-sm py-3 py-lg-0 px-3 px-lg-0" style="position: sticky; top: 0; z-index: 100; font-family: 'Oswald', sans-serif; font-size: 18px;">
+        <a href="index.html" class="navbar-brand d-block d-lg-none">
+            <h1 class="m-0 text-uppercase text-white"><i class="fa fa-birthday-cake fs-1 text-primary me-3"></i>ZEL CAKES</h1>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <div class="navbar-nav ms-auto mx-lg-auto py-0">
+            <a href="/home" class="nav-item nav-link active">Home</a>
+            <a href="about.html" class="nav-item nav-link">About Us</a>
+            <div class="navbar-nav ms-auto mx-lg-auto py-0" style="padding-left: 70px;">
+            <% category.forEach(function(category) { %>
+            <a href="/categorySorting?id=<%= category._id %>" class="nav-item nav-link"><%= category.category %></a>
+            <% }); %>
+                <!-- <a href="contact.html" class="nav-item nav-link">Contact Us</a> -->
+                <li style="padding: 30px; color: aliceblue;"><a href="cart.html"><i class="fa-sharp fa-solid fa-heart"></i></a> </li>
+                
+                <li style="padding: 30px;"><a href="cart.html"><i class="fa-solid fa-user"></i></a> </li>
+                
+                <li style="padding: 30px;"><a href="cart" ><i class="fa-solid fa-cart-shopping" ><span id="cartCount" class="cart-count" >0</span></i></a> </li>
+              </div>
+                <a href="/logout" class="nav-item nav-link" style="margin-left: 250px;">Logout</a>
+            </div>
+        </div>
+    </nav>
+    <!-- Navbar End -->
+
+<body>
+  <div class="container">
+    <div class="iphone">
+      <div class="header">
+        <div class="header-summary">
+          <div class="summary-text">
+            My Balance
+          </div>
+          <div class="summary-balance">
+            <% if (wallet && totalRefundAmount) { %>
+              &#8377; <%= totalRefundAmount.toFixed(2) %>
+            <% } else { %>
+              No wallet amount available
+            <% } %>
+          </div>
+        </div>
+        <div class="user-profile">
+          <img src="https://pbs.twimg.com/profile_images/1089189690773712897/bCJr7IzK_400x400.jpg" class="user-photo">
+        </div>
+      </div>
+      <div class="content">
+        <div class="card">
+          <div class="upper-row">
+            <div class="card-item">
+              <span>Active Balance</span>
+              <% if (wallet && totalRefundAmount) { %>                  
+                <span>&nbsp; <%= totalRefundAmount.toFixed(2) %> <span class="dollar">&#8377;</span></span>
+              <% } else { %>
+                No wallet amount available
+              <% } %>
+            </div>
+          </div>
+          <div class="lower-row">
+            <!-- Your other code here -->
+          </div>
+        </div>
+
+        <div class="transactions">
+          <span class="t-desc">Recent Transactions</span>
+          <% if (wallet && wallet.cancel.length > 0) { %>
+            <% wallet.cancel.forEach((orderRefundDetails, index) => { %>
+              <div class="transaction" <% if (index >= 3) { %> style="display: none;" <% } %>>
+                <a href="/productDetails">
+                  <div class="t-icon-container">
+                    <% if (orderRefundDetails.orderId && orderRefundDetails.orderId.product) { %>
+                      <img src="/images/<%= orderRefundDetails.orderId.product.image %>" class="t-icon">
+                    <% } else { %>
+                      <!-- Handle case when orderId or product is null -->
+                      <img src="/path/to/default/image.jpg" class="t-icon">
+                    <% } %>
+                  </div>
+                </a>
+                <div class="t-details">
+                  <div class="t-title" style="text-transform: capitalize;">
+                    <% if (orderRefundDetails.orderId && orderRefundDetails.orderId.product) { %>
+                      <!-- Product Name: <%= orderRefundDetails.orderId.product.productName %> -->
+                    <% } else { %>
+                      <!-- Handle case when orderId or product is null -->
+                      <!-- Product Name: N/A -->
+                    <% } %>
+                  </div>
+                  <div class="t-title" style="text-transform: capitalize;">
+                    <% if (orderRefundDetails.orderId) { %>
+                      Order number: <%= orderRefundDetails.orderId._id %>
+                    <% } else { %>
+                      Order number: N/A
+                    <% } %>
+                  </div>
+                  <div class="t-time">
+                    <span>Refund Date: </span><%= orderRefundDetails.refundDate.toDateString() %>
+                  </div>
+                </div>
+                <div class="t-amount">
+                  +&nbsp;<%= orderRefundDetails.cancelAmount %>&#8377;
+                </div>
+              </div>
+            <% }) %>
+            <% if (wallet.cancel.length > 3) { %>
+              <a href="#" id="viewMoreLink">View more</a>
+            <% } %>
+          <% } else { %>
+            <span></span>
+          <% } %>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $("#viewMoreLink").on("click", function(e) {
+        e.preventDefault();
+        $(".transaction").show();
+        $(this).hide();
+      });
+    });
+  </script>
+
+
+
+  
+    <!-- Include jQuery from a CDN -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Include ElevateZoom from a CDN -->
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
+
+
+<!-- Initialize ElevateZoom -->
+<!-- Initialize ElevateZoom -->
+
+  <script src="https://kit.fontawesome.com/5f6d1ef682.js" crossorigin="anonymous"></script>
+  
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

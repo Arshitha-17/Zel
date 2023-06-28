@@ -1,0 +1,51 @@
+<%- include('../layouts/header.ejs') %>
+
+<div class="container pt-5">
+  <section class="h-100 rounded-4 " style="background-color:#000000; ">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col col-xl-10">
+          <div class="card" style="border-radius: 1rem;">
+            <div class="row g-0">
+              <div class="col-md-6 col-lg-5 d-none d-md-block">
+                <img src="/images/zel_logo.jpg"
+                  alt="login form" class="img-fluid" style="border-radius: 1rem 0 0 1rem;" />
+              </div>
+              <div class="col-md-6 col-lg-7 d-flex align-items-center">
+                <div class="card-body p-4 p-lg-3 text-black">
+  
+                  <form action="/admin" method="post">
+  
+                    <h2 class="fw-normal mb-3 pb-3 fw-bold"  style="letter-spacing: 1px; font-family: Almarai">Admin Login</h2>
+                 
+                    <div class="form-outline mb-4">
+                      <input type="email" id="form2Example17" name="adminKey" class="form-control form-control-lg" placeholder="Admin Key" required />
+                    </div>
+  
+                    <div class="form-outline mb-4">
+                      <input type="password" id="form2Example27" name="password"   class="form-control form-control-lg" placeholder="Password" required />
+                    </div>
+                    <div class="pt-1 mb-4">
+                      <button class="btn btn-dark btn-lg btn-block" type="submit">Login</button>
+                      <% 
+                    if (typeof message !== 'undefined') {
+                      %>
+                      <p style="color: rgb(214, 42, 42);"><%= message %></p>  
+                      <%
+                    }                     
+                    %>
+                    </div>                    
+                    <a class="small text-muted " href="admin/adminforget">Forgot password?</a>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+
+<% include('../layouts/footer.ejs') %>
