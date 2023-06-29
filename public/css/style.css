@@ -524,6 +524,42 @@ background: linear-gradient(to top left, rgba(205, 156, 242, 1), rgba(246, 243, 
             border-bottom:none!important;
           }
           
-       /* logout */
-       
+       /* search */
+       .input-group {
+        display: flex;
+        align-items: center;
+      }
+      
+      .input {
+        min-height: 50px;
+        max-width: 150px;
+        padding: 0 1rem;
+        color: #000000;
+        font-size: 15px;
+        border: 1px solid  #cd894d;
+        border-radius: 6px 0 0 6px;
+        background-color: transparent;
+      }
+      
+      .button--submit {
+        min-height: 50px;
+        padding: .5em 1em;
+        border: none;
+        border-radius: 0 6px 6px 0;
+        background-color: #cd894d;
+        color: #fff;
+        font-size: 15px;
+        cursor: pointer;
+        transition: background-color .3s ease-in-out;
+      }
+      
+      .button--submit:hover {
+        background-color: #000000;
+      }
+      
+      .input:focus, .input:focus-visible {
+        border-color: #000000;
+        outline: none;
+      }
+      
           

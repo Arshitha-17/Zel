@@ -1,197 +1,443 @@
-<!-- const conformOrder = async (req, res) => {
-  try {
-      console.log("Confirm order inside");
-      const userId = req.session.userId;
-      const { addressForDelivery, payment } = req.body;
-      const couponCode = req.body.couponCode || ''
-      let couponAvailable;
-      let subtotal = 0;
-      var couponAmount = 0;
-      let currentDate = new Date();
+<link href="img/favicon.ico" rel="icon">
 
-      if (couponCode) {
-          console.log("coupon")
-          couponAvailable = await couponModel.findOne({ code: couponCode })
-          const userCartData = await cartModel.findOne({ userid: userId }).populate("product.product_id")
-          if (userCartData && userCartData.product && userCartData.product.length > 0) {
-              for (const cartItem of userCartData.product) {
-                  const product = cartItem.product_id;
-                  const productPrice = product.price * cartItem.productQuantity;
-                  subtotal += productPrice;
-              }
+<!-- Google Web Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Oswald:wght@500;600;700&family=Pacifico&display=swap" rel="stylesheet"> 
 
-              let couponValue = couponAvailable.couponAmount;
-              subtotal = subtotal - couponValue
-          }
-      }
-      console.log(subtotal)
+<!-- Icon Font Stylesheet -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
-      const allcategory = await categoryModel.find({});
-      const currentAddress = await addressModel.find({ userid: userId });
-      const matchingAddress = currentAddress.find(
-          (address) => address._id.toString() === addressForDelivery
-      );
-      const cart = await cartModel.findOne({ userid: userId });
-      const productIdOnly = cart.product.map((i) => i.product_id);
-      const productIdAndQuantity = cart.product.map((i) => {
-          const productId = i.product_id;
-          const productQuantity = i.productQuantity;
-          return { productQuantity, productId };
-      });
-      const productAllDetails = await productModel
-          .find({ _id: { $in: productIdOnly } })
-          .populate("category_id");
-      const totalQuantity = cart.product.reduce(
-          (total, product) => total + product.productQuantity,
-          0
-      );
-      const totalAmount = productAllDetails.reduce((total, product) => {
-          const productQuantity = productIdAndQuantity.find(
-              (item) => item.productId.toString() === product._id.toString()
-          ).productQuantity;
-          return total + product.price * productQuantity;
-      }, 0);
-      var expectedDeliveryDate = new Date();
-      expectedDeliveryDate.setDate(expectedDeliveryDate.getDate() + 4);
+<!-- Libraries Stylesheet -->
+<link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
 
-      let couponCoded
-      let ordercount=0
-      if(couponAvailable){
-          couponAvailable.code 
-          couponCoded=couponAvailable.code ?couponAvailable.code:"not available"
-      }
-      if(totalAmount||subtotal){
-          ordercount=totalAmount?totalAmount:subtotal
-      }
+<!-- Customized Bootstrap Stylesheet -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
 
-      console.log(couponCoded)
-      console.log(ordercount)
-      let newOrder = new orderModel({
-          userId: userId,
-          products: productIdAndQuantity.map((item) => ({
-              product_id: item.productId,
-              Quantity: item.productQuantity,
-          })),
-          total: subtotal?subtotal:totalAmount,
-          totalQuantity: totalQuantity,
-          coupon: couponCoded, // Fill this with the coupon value if applicable
-          paymentMethod: payment,
-          status: "Pending",
-          address: matchingAddress._id,
-          orderDate: currentDate,
-          paymentStatus: payment == "Net Banking" ? "Paid" : "Unpaid",
-          orderNumber: generateOrderNumber(),
-          expectedDeliveryDate: expectedDeliveryDate,
-      });
+<!-- Template Stylesheet -->
+<link href="css/style.css" rel="stylesheet">
+</head>
 
-      const savedOrder = await newOrder.save();
-      console.log(savedOrder)
-      const productIds = productIdAndQuantity.map((item) => item.productId);
-      const productsToUpdate = await productModel.find({ _id: { $in: productIds } });
-      // Update the product stock based on the ordered quantities
-      for (let i = 0; i < productsToUpdate.length; i++) {
-          const productToUpdate = productsToUpdate[i];
-
-          const orderedQuantity = Number(productIdAndQuantity.find((item) => item.productId.toString() === productToUpdate._id.toString()).productQuantity);
-
-          for (let i = 0; i < productsToUpdate.length; i++) {
-              const productToUpdate = productsToUpdate[i];
-              const orderedQuantity = Number(productIdAndQuantity.find((item) => item.productId.toString() === productToUpdate._id.toString()).productQuantity);
-
-              if (!isNaN(orderedQuantity) && orderedQuantity > 0) {
-                  const currentQuantity = productToUpdate.productQuantity;
-                  let updatedQuantity;
-
-                  if (typeof currentQuantity === 'number') {
-                      updatedQuantity = currentQuantity - orderedQuantity;
-                  } else if (typeof currentQuantity === 'string') {
-                      updatedQuantity = Number(currentQuantity) - orderedQuantity;
-                  }
-
-                  await productModel.findOneAndUpdate(
-                      { _id: productToUpdate._id },
-                      { $set: { productQuantity: updatedQuantity.toString() } }
-                  );
-              }
-          }
-      }
-
-      const data = {
-          matchingAddress,
-          order: savedOrder,
-          totalAmount: totalAmount,
-          totalQuantity: totalQuantity,
-          allcategory: allcategory,
-          products: productAllDetails,
-      };
-
-      res.render("users/orderConformation", { data });
-  } catch (error) {
-      console.error(error);
-  }
-};
-
-
-const couponCode= req.body.couponCode || '';
-let couponAvailable;
-let currentAmount=0;
-let currentdate = new Date();
-
-
-if(couponCode){
-  console.log('coupon');
-  couponAvailable=await couponModel.findOne({couponName:couponCode})
-  const userCartData = await cartModel.findOne({ userid: userId }).populate("product.productId")
-      if (userCartData && userCartData.product && userCartData.product.length > 0) {
-          for (const cartItem of userCartData.product) {
-              const product = cartItem.productId;
-              const productPrice = product.price * cartItem.quantity;
-              subtotal += productPrice;
-            }
-
-            let couponValue = couponAvailable.couponAmount;
-            subtotal = subtotal - couponValue
-        }
+<body>
+<!-- Topbar Start -->
+<div class="container-fluid px-0 d-none d-lg-block">
+    <div class="row gx-0">
+        <div class="col-lg-4 text-center bg-secondary py-3">
+            <div class="d-inline-flex align-items-center justify-content-center">
+                <i class="bi bi-envelope fs-1  me-3" style="color: #E88F2A;"></i>
+                <div class="text-start">
+                    <h6 class="text-uppercase mb-1">Email Us</h6>
+                    <span>zelcakes@gmail.com</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 text-center  border-inner py-3" style="background-color: #E88F2A;">
+            <div class="d-inline-flex align-items-center justify-content-center">
+                <a href="index.html" class="navbar-brand">
+                    <h1 class="m-0 text-uppercase text-white"><i class="fa fa-birthday-cake fs-1 text-dark me-3"></i>ZEL CAKES</h1>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-4 text-center bg-secondary py-3">
+            <div class="d-inline-flex align-items-center justify-content-center">
+                <i class="bi bi-phone-vibrate fs-1  me-3"  style="color: #E88F2A;"></i>
+                <div class="text-start">
+                    <h6 class="text-uppercase mb-1">Call Us</h6>
+                    <span>7034430171</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Topbar End -->
+<STyle>
+ button {
+  position: relative;
+  padding: 10px 20px;
+  border-radius: 7px;
+  border: 1px solid rgb(61, 106, 255);
+  font-size: 14px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 2px;
+  background: transparent;
+  color: #000000;
+  overflow: hidden;
+  box-shadow: 0 0 0 0 transparent;
+  -webkit-transition: all 0.2s ease-in;
+  -moz-transition: all 0.2s ease-in;
+  transition: all 0.2s ease-in;
 }
-console.log(subtotal) -->
 
- 
-<!--Pagination 4-->
-       
-<div class="col-lg-12">
-    <div class="pagination">
-<nav class="Pager4" aria-label="pagination example">
-    <ul class="pagination pagination-circle justify-content-center">
-        <% if (currentPage > 1) { %>
-        <!--Arrow left-->
-        <li class="page-item disabled">
-            <a  href="/home?page=<%= currentPage - 1 %>" class="page-link prev" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-                <span class="sr-only"><<</span>
-            </a>
-        </li>
-        <% } %>
-          
-                <% for (let i = 1; i <= totalPages; i++) { %>
-                  <% if (i === currentPage) { %>
-        <!--Numbers-->
-        <li class="page-item active"><a class="page-link"><%= i %></a></li>
-        <% } else { %>
-        <li class="page-item" href="/home?page=<%= i %>"><a class="page-link"><%= i %></a></li>
-        <% } %>
-        <% } %>
-        <% if (currentPage < totalPages) { %>
+button:hover {
+  background: rgb(7, 123, 152);
+  color: #fff;
+  /* box-shadow: 0 0 30px 5px rgba(0, 142, 236, 0.815); */
+  -webkit-transition: all 0.2s ease-out;
+  -moz-transition: all 0.2s ease-out;
+  transition: all 0.2s ease-out;
+}
 
-        <!--Arrow right-->
-        <li class="page-item">
-            <a href="/home?page=<%= currentPage + 1 %>" class="page-link next" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-                <span class="sr-only">>></span>
-            </a>
-        </li>
-        <% } %>
-    </ul>
-</nav>  
-</div>
-</div>
-  
+button:hover::before {
+  -webkit-animation: sh02 0.5s 0s linear;
+  -moz-animation: sh02 0.5s 0s linear;
+  animation: sh02 0.5s 0s linear;
+}
+
+button::before {
+  content: '';
+  display: block;
+  width: 0px;
+  height: 86%;
+  position: absolute;
+  top: 7%;
+  left: 0%;
+  opacity: 0;
+  background: #fff;
+  box-shadow: 0 0 50px 30px #fff;
+  -webkit-transform: skewX(-20deg);
+  -moz-transform: skewX(-20deg);
+  -ms-transform: skewX(-20deg);
+  -o-transform: skewX(-20deg);
+  transform: skewX(-20deg);
+}
+
+@keyframes sh02 {
+  from {
+    opacity: 0;
+    left: 0%;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    left: 100%;
+  }
+}
+
+button:active {
+  box-shadow: 0 0 0 0 transparent;
+  -webkit-transition: box-shadow 0.2s ease-in;
+  -moz-transition: box-shadow 0.2s ease-in;
+  transition: box-shadow 0.2s ease-in;
+}
+
+</STyle>
+
+<!-- Navbar Start -->
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark shadow-sm py-3 py-lg-0 px-3 px-lg-0">
+    <a href="index.html" class="navbar-brand d-block d-lg-none">
+        <h1 class="m-0 text-uppercase text-white"><i class="fa fa-birthday-cake fs-1 text-primary me-3"></i>ZEL CAKES</h1>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav ms-auto mx-lg-auto py-0">
+            <a href="/home" class="nav-item nav-link active">Home</a>
+            <a href="about.html" class="nav-item nav-link">About Us</a>
+            <div class="navbar-nav ms-auto mx-lg-auto py-0" style="padding-left: 70px;">
+            <% category.forEach(function(category) { %>
+            <a href="/categorySorting?id=<%= category._id %>" class="nav-item nav-link"><%= category.category %></a>
+            <% }); %>
+            <li style="padding: 30px; color: aliceblue;"><a href="wishlist"><i class="fa-sharp fa-solid fa-heart"></i></a> </li>
+            
+            <li style="padding: 30px;"><a href="userProfile"><i class="fa-solid fa-user"></i></a> </li>
+            
+            <li style="padding: 30px;"><a href="cart" ><i class="fa-solid fa-cart-shopping" ><span id="cartCount" class="cart-count" >0</span></i></a> </li>
+      
+        </div>
+            
+            <i class="fa-solid fa-cart-shopping"></i>
+            <a href="/logout" class="nav-item nav-link" style="margin-left: 250px;">Logout</a>
+        </div>
+    </div>
+
+</nav>
+<!-- Navbar End -->
+
+
+<body>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 mt-5 p-1">
+                <form class="pay-form">
+                <div class="row mb-3">
+
+                    <% currentAddress.forEach(function(currentAddress) { %>      
+                        <div class="col-lg-4 mb-3">
+                            <div style="background-color: rgba(0, 0, 0, 0.848); color: rgb(255, 255, 255);"
+                                class="form-check h-100 border rounded-3">
+                                <div class="p-2">
+                                    <input class="form-check-input" value="<%= currentAddress._id %>"
+                                        type="radio" name="addressForDelivery" id="flexRadioDefault1"
+                                        checked />
+                                        
+                                    <label class="form-check-label" for="flexRadioDefault1">
+                                        <%= currentAddress.name %> </br>
+                                    <a href="/addressEditCart?id=<%=currentAddress._id%>" class="edit-button" style="float: right;left: 20px;">
+                                            <svg class="edit-svgIcon" viewBox="0 0 512 512">
+                                                              <path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"></path>
+                                                            </svg>
+                                          </a>
+                                          <%= currentAddress.address %><br>
+                                          <%= currentAddress.state   %><br>
+                                                    <H6 class="text-white">
+                                                        <%= currentAddress.phone  %>
+                                                    </H6>
+                                                    
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <% }) %>
+                    
+                        </div>
+                    <div class="d-flex align-items-center mx-2 col-md-3">
+                        <a href="/addMoreAddress" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addAddress">Add
+                            Address</a>
+                    </div>
+                </div>
+
+            <div class="col-md-4 mt-5 pt-1">
+                <div class="card mb-4">
+                    <div class="card-header py-3">
+                        <h5 class="mb-0">Payment Method</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li
+                                class="list-group-item d-flex justify-content-between align-items-center border-bottom px-0">
+                                <label for="cashpayment">Cash on Delivery</label>
+                                <input type="radio" name="payment" id="cashpayment" value="Cash on Delivery" required>
+                            </li>
+                            <li
+                                class="list-group-item d-flex justify-content-between align-items-center border-bottom px-0">
+                                <label for="netpayment">Net Banking</label>
+                                <input type="radio" name="payment" id="netpayment" value="Net Banking" required>
+                            </li>
+                            <li
+                                class="list-group-item d-flex justify-content-between align-items-center border-bottom px-0">
+                                <label for="netpayment">Wallet</label>
+                                <input type="radio" name="payment" id="walletpayment" value="Wallet" required>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card mb-4">
+                    <div class="card-header py-3">
+                        <h5 class="mb-0">Summary</h5>
+                    </div>
+                    <div class="card-body p-1">
+                    
+                            <p>GIVE CODE</p>
+                            <input id="code" name="couponCode" placeholder="Enter your code">
+                            <p id="message" class="text-danger"></p>
+                          
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                                  <span id="totalLabel">Total</span>
+                                  <span id="totalValue"><%= total %></span>
+                                  <input type="hidden" name="total" value="<%= total %>">
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                                    <span>Discount Amount</span>
+                                    <span id="discountLable" style="margin-left: 180px;"></span>
+                                    <span ></span>
+                                   
+                                  </li>
+                                  
+                                                   
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                  Shipping
+                                  <span>Free</span>
+                                </li>
+                              </ul>
+                              
+                        <div class="py-2" style="padding-left: 9PX;">
+                            <!-- <input  type="submit" id="confirm" class="btn btn-primary btn-sm btn-block"
+                                value="Confirm Order"> -->
+                                <button  type="submit" id="confirm"  value="Confirm Order"> CONFIRM
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+               
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+   $(document).ready(function(){
+    $('.pay-form').submit(function(e){
+        e.preventDefault();
+
+        var paymentMethod = $('input[name="payment"]:checked').val();
+        if (paymentMethod === 'Net Banking') {
+            var formData = $(this).serialize();
+
+            $.ajax({
+                url: "/createOrder",
+                type: "POST",
+                data: formData,
+                success: function(res){
+                    if(res.success){
+                        var options = {
+                            "key": ""+res.key_id+"", // Enter the Key ID generated from the Dashboard
+                            "amount": ""+res.amount+"", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                            "currency": "INR",
+                            "name": "Orders",
+                            "description": "Test Transaction",
+                            "image": "/images/zel_logo.jpg",
+                            "order_id": ""+res.order_id+"", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+                            "handler": function (response){
+                                // Submit the form to a separate route for further processing
+                                var form = $('.pay-form');
+                                var url = form.attr('action');
+                                var method = form.attr('method');
+                                $('<input>').attr({
+                                    type: 'hidden',
+                                    name: 'paymentMethod',
+                                    value: paymentMethod
+                                }).appendTo(form);
+                                form.attr('action', '/confirmOrder');
+                                form.attr('method', 'POST');
+                                form.unbind('submit').submit();
+                                form.attr('action', url);
+                                form.attr('method', method);
+                            },
+                            "prefill": {
+                                "name": ""+res.name+"",
+                                "email": ""+res.email+"",
+                                "contact": ""+res.mobile+""
+                            },
+                            "notes": {
+                                "address": "Razorpay Corporate Office"
+                            },
+                            "theme": {
+                                "color": "green"
+                            }
+                        };
+                        var rzp1 = new Razorpay(options);
+                        rzp1.on('payment.failed', function (response){
+                            alert("Payment Failed");
+                        });
+
+                        rzp1.open();
+                    } else {
+                        alert(res.msg);
+                    }
+                }
+            });
+        } else if (paymentMethod === 'Wallet') {
+            var formData = $(this).serialize();
+
+            // Send AJAX request to check wallet balance
+            $.ajax({
+                url: "/checkWalletBalance",
+                type: "POST",
+                data: formData,
+                success: function(res) {
+                    if (res.sufficientBalance) {
+                        // Sufficient balance in the wallet
+                        var form = $('.pay-form');
+                        var url = form.attr('action');
+                        var method = form.attr('method');
+                        $('<input>').attr({
+                            type: 'hidden',
+                            name: 'paymentMethod',
+                            value: paymentMethod
+                        }).appendTo(form);
+                        form.attr('action', '/confirmOrder');
+                        form.attr('method', 'POST');
+                        form.unbind('submit').submit();
+                        form.attr('action', url);
+                        form.attr('method', method);
+                    } else {
+                        // Insufficient balance in the wallet
+                        alert("Insufficient Balance. Please add funds to your wallet.");
+                    }
+                }
+            });
+        } else {
+            // Redirect to a separate route for non-Net Banking payments
+            var form = $(this);
+            var url = form.attr('action');
+            var method = form.attr('method');
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'paymentMethod',
+                value: paymentMethod
+            }).appendTo(form);
+            form.attr('action', '/confirmOrder');
+            form.attr('method', 'POST');
+            form.unbind('submit').submit();
+            form.attr('action', url);
+            form.attr('method', method);
+        }
+    });
+});
+</script>
+
+
+<script>
+const codeinput = document.getElementById('code');
+const totalLabel = document.getElementById('totalLabel');
+const totalValue = document.getElementById('totalValue');
+const message = document.getElementById('message');
+const discountLables = document.getElementById('discountLable');
+const categoryOffer= JSON.parse(decodeURIComponent("<%=categoryOffer%>"))
+
+codeinput.addEventListener('input', validateCode);
+
+function validateCode() {
+  const enteredCode = codeinput.value.trim();
+  fetch('/checkCouponAvailable', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        code: enteredCode
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.available) {
+        // console.log("its me discount",data.couponAmounts);
+        totalLabel.textContent = 'Subtotal';
+        totalValue.textContent = data.subtotal;
+        discountLables.textContent = data.couponAmounts;
+        message.textContent = '';
+      } else {
+        console.log('not available');
+        totalLabel.textContent = 'Total';
+        totalValue.textContent = '<%= total %>';
+        message.textContent = 'Invalid coupon';
+        console.log("its me total","<%= total %>");
+      }
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
+
+</script>
+    <!-- Template Javascript -->
+<script src="js/main.js"></script>
+<script src="https://kit.fontawesome.com/5f6d1ef682.js" crossorigin="anonymous"></script>

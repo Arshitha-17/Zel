@@ -67,7 +67,7 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav ms-auto mx-lg-auto py-0">
                 <a href="/home" class="nav-item nav-link active">Home</a>
-                <a href="about.html" class="nav-item nav-link">About Us</a>
+                <a href="/home" class="nav-item nav-link">About Us</a>
                 <div class="navbar-nav ms-auto mx-lg-auto py-0" style="padding-left: 70px;">
                 <% category.forEach(function(category) { %>
                 <a href="/categorySorting?id=<%= category._id %>" class="nav-item nav-link"><%= category.category %></a>
@@ -229,14 +229,19 @@
         <div class="row justify-content-end">
             <div class="col-lg-4">
                 <form action="/home" method="get" class="input-group" style="box-shadow: #111111;">
-                  <div class="form-outline">
+                  <!-- <div class="form-outline">
                     <input type="search" id="form1" class="form-control" name="search" placeholder="Search" />
                   </div>
                   <button type="submit" style="height: 38px;" class="btn btn-primary">
                     <i class="fas fa-search"></i>
-                  </button>
-                </form>
+                  </button> -->
+                  <div class="input-group">
+                    <input type="search" class="input" id="Email" name="search" placeholder="Cake" autocomplete="off">
+                    <input class="button--submit" value="Search" type="submit">
+                </div>
               </div>
+                </form>
+            
           </div>
         <section class="mt-5">
           <div class="text-center">

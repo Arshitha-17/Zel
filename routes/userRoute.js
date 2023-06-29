@@ -50,6 +50,7 @@ user_route.get('/home',userController.homeLoad)
 user_route.get('/register',auth.isLogout,userController.loadRegister);
 user_route.post('/register',userController.insertUser)
 user_route.get('/verify',userController.verifyMail)
+user_route.post('/duplicateUser',userController.duplicateUser)
 
 user_route.get('/login',auth.isLogout,userController.loginPage);
 user_route.post('/login',userController.loginUserVerify)
@@ -72,7 +73,8 @@ user_route.get('/productDetails/',userController.productDetailPage);
 user_route.get('/categorySorting',userController.categorySorting)
 
 user_route.get('/cart',userController.addtoCartPage)
-user_route.post('/cart',userController.addtoCartPostMethod)
+user_route.post('/cart',userController.addtoCartPostMethod) 
+user_route.get('/deleteproduct',userController.deleteproduct)
 
 user_route.get('/cartError',userController.loardcartError)
 

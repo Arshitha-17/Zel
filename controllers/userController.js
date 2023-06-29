@@ -93,25 +93,27 @@ const loadRegister = async (req, res) => {
 
 const insertUser = async (req, res) => {
   try {
-    console.log("insertUser");
-    
-    // Generating referral code
+    console.log("insertUser"); 
+    const email=req.body.email;
+    const userInfo=await UserList.findOne({email:email})
+    if(userInfo){
+      return res.render("registration",{error:"Email Already Exists."});
+    }
+    if(!userInfo){
+       // Generating referral code
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let code = '';
     const length = 17;
     for (let i = 0; i < length; i++) {
       code += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    
+    }    
     const refCode = req.body.refCode || ''; // Set refCode to an empty string if it doesn't exist
-    const userDetails = await UserList.findOne({ referralCode: refCode });
-    
+    const userDetails = await UserList.findOne({ referralCode: refCode });    
     let originalRef = '';
     if (userDetails) {
       originalRef = userDetails.referralCode;
       console.log("User Details:", userDetails);
-    }
-    
+    }    
     const sPassword = await securePassword(req.body.password);
     const userToDatabase = new UserModel({
       name: req.body.name,
@@ -145,22 +147,37 @@ const insertUser = async (req, res) => {
           }
         }
       }
-
       sendVerifyMail(req.body.name, req.body.email, userData._id);
-      res.render("registration", {
-        message: "Your registration has been successful.",
-      });
+      // res.render("registration", {
+      //   message: "Your registration has been successful.",
+      // });
+      return res.redirect('/login')
     } else {
       res.render("registration", {
         message: "Your registration has failed.",
       });
+    }
     }
   } catch (error) {
     console.log(error.message);
   }
 };
 
-
+// duplicateUser
+const duplicateUser=async(req,res)=>{
+  try {
+    const {email}=req.body
+    const duplicate= await UserList.findOne({email:email})
+    if(duplicate){
+      return res.json({exists:true})
+    }
+    if(!duplicate){
+      return res.json({exists:false})
+    }
+  } catch (error) {   
+    console.log(error.message);
+  }
+}
 
 const loginPage = async (req, res) => {
   try {
@@ -545,19 +562,19 @@ const addtoCartPage = async (req, res) => {
     const userCartData = await cartModel.findOne({ userid: userId }).populate("product.productId");
     let totalPrice = 0;
     let productPrice;
-    console.log("hey cart", userCartData);
+    // console.log("hey cart", userCartData);
 
     if (!userCartData || userCartData.product.length === 0) {
       return res.redirect('/cartError');
     }
 
     for (const cartItem of userCartData.product) {
-      console.log("hey its me", cartItem);
+      // console.log("hey its me", cartItem);
       productPrice = cartItem.newPrice * cartItem.quantity;
       totalPrice += productPrice;
     }
 
-    console.log("productPrice:", productPrice);
+    // console.log("productPrice:", productPrice);
     res.render("cart", { userCartData, totalPrice, productPrice });
   } catch (error) {
     console.log(error.message);
@@ -609,6 +626,25 @@ const addtoCartPostMethod = async (req, res) => {
     console.log(error.message);
   }
 };
+
+// delete
+const deleteproduct=async(req,res)=>{
+  
+  try {
+    const userId = req.session.userId;
+    const productId = req.query.deleteId
+    console.log("productId",productId);
+    const cartvalue=await cartModel.findOne({userid:userId})
+      const cart = await cartModel.updateOne(
+        { userid: userId },
+        { $pull: { product: { productId: productId } } }
+      );
+      return res.redirect("/cart")
+    } catch (error) {
+      console.log(error);
+    }
+    
+}
 
 // cart error
 const loardcartError=async(req,res)=>{
@@ -1359,6 +1395,7 @@ module.exports = {
 
   loadRegister,
   insertUser,
+  duplicateUser,
   loginPage,
   loginUserVerify,
   forgetPassword,
@@ -1374,6 +1411,7 @@ module.exports = {
   productDetailPage,
   categorySorting,
   addtoCartPostMethod,
+  deleteproduct,
   updateQuatity,
   addtoCartPage,
   loardcartError,
