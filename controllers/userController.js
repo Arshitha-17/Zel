@@ -93,7 +93,6 @@ const loadRegister = async (req, res) => {
 
 const insertUser = async (req, res) => {
   try {
-    console.log("insertUser"); 
     const email=req.body.email;
     const userInfo=await UserList.findOne({email:email})
     if(userInfo){
@@ -111,8 +110,7 @@ const insertUser = async (req, res) => {
     const userDetails = await UserList.findOne({ referralCode: refCode });    
     let originalRef = '';
     if (userDetails) {
-      originalRef = userDetails.referralCode;
-      console.log("User Details:", userDetails);
+      originalRef = userDetails.referralCode;;
     }    
     const sPassword = await securePassword(req.body.password);
     const userToDatabase = new UserModel({
@@ -135,15 +133,12 @@ const insertUser = async (req, res) => {
           totalRefundAmount: 50,
         });
         const createdWallet = await walletData.save();
-        console.log('Wallet created:', createdWallet);
-
         // Credit referral amount to the owner of the referral code
         if (originalRef) {
           const ownerWallet = await walletModel.findOne({ userId: userDetails._id });
           if (ownerWallet) {
             ownerWallet.totalRefundAmount += 50; // Adjust the referral amount as needed
             await ownerWallet.save();
-            console.log('Referral amount credited to owner:', ownerWallet);
           }
         }
       }
@@ -194,9 +189,8 @@ const loginUserVerify = async (req, res) => {
     const is_Match = await UserModel.findOne({ email: email });
     const category = await Category.find({});
     const product = await Product.find({});
-    // console.log(category[0]);
   
-    // pagination
+// pagination
     const ITEMS_PER_PAGE = 8;
     const page = parseInt(req.query.page) || 1;
     const skipItems = (page - 1) * ITEMS_PER_PAGE;
@@ -206,8 +200,6 @@ const loginUserVerify = async (req, res) => {
     const allProducts = await Product.find({}).skip(skipItems)
     .limit(ITEMS_PER_PAGE).populate('category').exec();
     
-
-    console.log(category);
     if (!is_Match) {
       res.render("login", { message: "No user found" });
       return;
@@ -237,7 +229,6 @@ const loginUserVerify = async (req, res) => {
 
 //reset mail
 const resetPasswordEmail = async (name, email, token) => {
-  console.log("reset");
   try {
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
@@ -344,7 +335,7 @@ const resetPassword = async (req, res) => {
 //send otp with email
 const sendOtp = async (name, email, otp) => {
   try {
-    console.log(`Inside Email function${name},${email},${otp}`);
+
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 587,
@@ -384,31 +375,25 @@ const logWithOtp = async (req, res) => {
 
 const OTPEmailVerify = async (req, res) => {
   try {
-    console.log("Sent Email POST Method Loaded");
     const email = req.body.email;
     const is_Match = await UserModel.findOne({ email: email });
     if (!is_Match) {
       res.render("logotp", { message: "user not found" });
       return;
     }
-    console.log("User finded");
     if (is_Match.is_verified === 0) {
       res.render("login", { message: "please verify your email" });
-      console.log("User Not Verified with Email");
+
       return;
     } else {
-      console.log("Generating OTP Email");
       let OTPgenerated = Math.floor(100000 + Math.random() * 900000);
       sendOtp(is_Match.name, is_Match.email, OTPgenerated);
       const OTPAddedToDatabase = await UserModel.updateOne(
         { email: email },
         { $set: { otp: OTPgenerated } }
       );
-      console.log("Set OTP to Database");
       const userId = is_Match._id;
       req.session.user_id = userId;
-      console.log(userId);
-
       // res.redirect('/otpverify',{message:'please check your mail'});
       res.redirect("/otpverify");
     }
@@ -419,12 +404,11 @@ const OTPEmailVerify = async (req, res) => {
 
 const OTPFind = async (req, res) => {
   try {
-    console.log("Inside OTP Get Method");
+
     res.render("otpverify");
     return;
     // const UserEnteredOTP=req.body.otp;
     // const FindUserMyOTP= await UserModel.findOne({otp:UserEnteredOTP});
-    // console.log(FindUserMyOTP);
     // if(FindUserMyOTP){
     //     res.render('otpverify',{user_id:FindUserMyOTP._id});
     //     return;
@@ -438,18 +422,18 @@ const OTPFind = async (req, res) => {
 
 const OTPpostMethod = async (req, res) => {
   try {
-    console.log("Inside Post Method");
+
     const otp = req.body.otp;
     const user_id = req.session.user_id;
 
     const users = await UserModel.findById({ _id: user_id });
     const product = await Product.find({});
-    console.log(users.name);
+
     if (users.otp !== otp) {
       res.render("otpverify", { message: "invalid otp" });
       return;
     } else {
-      console.log("otp verified redirect to login");
+
       res.render("home", { product: product });
       const updatedData = await UserModel.findByIdAndUpdate(
         { _id: user_id },
@@ -459,14 +443,7 @@ const OTPpostMethod = async (req, res) => {
       return;
     }
 
-    // const user_id=await UserModel.findOne({otp:otp});
-    // console.log(otp);
-    // console.log(user_id);
-    // const secure_password= await securePassword(password);
 
-    // const updatedData= await UserModel.findByIdAndUpdate({_id:user_id},{$set:{otp:otp,otp:''}});
-
-    // res.redirect('/home',)
   } catch (error) {
     console.log(error.message);
   }
@@ -519,7 +496,6 @@ const homeLoad = async (req, res) => {
 // product detail page
 const productDetailPage = async (req, res) => {
   try {
-    // console.log("indide detail page");
     const category = await Category.find({});
 
     let productId = req.query.id;
@@ -538,14 +514,14 @@ const productDetailPage = async (req, res) => {
 
 const categorySorting = async (req, res) => {
   try {
-    // console.log('inside wedding category');
+
     let categoryId = req.query.id;
     const categorys = await Category.findOne({ _id: categoryId });
     const categoryName = categorys.category;
     const category = await Category.find({});
 
    let products = await Product.find({ category: categoryName }).lean();
-    // console.log(products);
+   
     res.render("categorySorting", { product:products,category:category});
   } catch (error) {
     console.log(error.message);
@@ -557,24 +533,18 @@ const categorySorting = async (req, res) => {
 // add to cart
 const addtoCartPage = async (req, res) => {
   try {
-    console.log("inside add to cart get method");
     const userId = req.session.userId;
     const userCartData = await cartModel.findOne({ userid: userId }).populate("product.productId");
     let totalPrice = 0;
     let productPrice;
-    // console.log("hey cart", userCartData);
-
     if (!userCartData || userCartData.product.length === 0) {
       return res.redirect('/cartError');
     }
 
     for (const cartItem of userCartData.product) {
-      // console.log("hey its me", cartItem);
       productPrice = cartItem.newPrice * cartItem.quantity;
       totalPrice += productPrice;
     }
-
-    // console.log("productPrice:", productPrice);
     res.render("cart", { userCartData, totalPrice, productPrice });
   } catch (error) {
     console.log(error.message);
@@ -584,11 +554,10 @@ const addtoCartPage = async (req, res) => {
 
 const addtoCartPostMethod = async (req, res) => {
   try {
-    // console.log("inside post add to cart");
-    console.log("///////")
+
     const userId = req.session.userId;
     const { productId,price } = req.body;
-    // console.log(req.body)
+
     const cart = await cartModel.findOne({ userid: userId });
 
     if (cart) {
@@ -596,13 +565,13 @@ const addtoCartPostMethod = async (req, res) => {
         (product) => product.productId.toString() === productId
       );
       if (existingProduct) {
-        console.log("product already exist");
+  
         return;
       }
       cart.product.push({ productId: productId ,newPrice:price});
       await cart.save();
     } else {
-      console.log("no cart now");
+
       const newCart = new cartModel({
         userid: userId,
         product: [
@@ -621,7 +590,7 @@ const addtoCartPostMethod = async (req, res) => {
         { $pull: { product: { product_id: { $in: productId } } } }
       );
  
-    console.log("product added",removeWish);
+
   } catch (error) {
     console.log(error.message);
   }
@@ -633,7 +602,7 @@ const deleteproduct=async(req,res)=>{
   try {
     const userId = req.session.userId;
     const productId = req.query.deleteId
-    console.log("productId",productId);
+
     const cartvalue=await cartModel.findOne({userid:userId})
       const cart = await cartModel.updateOne(
         { userid: userId },
@@ -649,9 +618,7 @@ const deleteproduct=async(req,res)=>{
 // cart error
 const loardcartError=async(req,res)=>{
   try {
-    console.log('insode error');
     const category = await Category.find();
-    console.log(category);
     res.render('cartError',{category})
   } catch (error) {
     console.log(error.message);
@@ -662,37 +629,24 @@ const updateQuatity = async (req, res) => {
   try {
     const userId = req.session.userId;
     let { productId, newQuantity } = req.body;
-  
  // Check the value of newQuantity
-    console.log(req.body)
-    console.log(typeof(newQuantity))
     let quantity = parseInt(newQuantity) // Check the parsed quantity value
-    console.log(quantity)
     if (isNaN(quantity)) {
       throw new Error("Invalid quantity value");
     }
-
     if (quantity < 1) {
-      console.log("quantity less than 1");
       const filter = { userid: userId };
       const update = { $pull: { product: { productId: productId } } };
       const deleteFromCart = await cartModel.updateOne(filter, update);
-      console.log(deleteFromCart);
       res.send({ redirect: "/cart" });
       return;
     }
-
     const cart = await cartModel.findOne({ userid: userId });
-    console.log("cart:", cart);
-
     const quantityUpdate = await cartModel.updateOne(
       { userid: userId, "product.productId": productId },
       { $set: { "product.$.quantity": quantity } }
     );
-
-    console.log("quantityUpdate:", quantityUpdate);
-
-    if (quantityUpdate.modifiedCount == 1) {
+   if (quantityUpdate.modifiedCount == 1) {
       res.send({ redirect: "/cart" });
       return;
     }
@@ -705,7 +659,6 @@ const updateQuatity = async (req, res) => {
 
 const addAddressPage = async (req, res) => {
   try {
-    console.log("inside address");
     const userId = req.session.userId;
     let total=req.query.total;
     
@@ -730,20 +683,16 @@ const addAddressPage = async (req, res) => {
     const categories= await Category.findOne({category:productCategory})
     categoryOffer=categories.categoryOffer
     let totalCategoryofferAmount=categoryOffer*productQuantity
-    console.log('address cat totalCategoryofferAmount',totalCategoryofferAmount);
-
     const category = await Category.find({});
     const currentCart = await cartModel.findOne({ userid: userId });
     const currentAddress = await addressModel.find({ userid: userId });  
     if (currentAddress) {
-      console.log("user have already address");
       res.render("address", {
         currentAddress: currentAddress,
         currentCart: currentCart,total,category,
         categoryOffer:encodeURIComponent(JSON.stringify(totalCategoryofferAmount))
       });
     } else {
-      console.log("user no ddress");
       res.render("addNewAddress");
     }
   } catch (error) {
@@ -755,7 +704,6 @@ const addAddressPage = async (req, res) => {
 
 const userAddNewAddress = async (req, res) => {
   try {
-    console.log("insode add new address get page ");
     res.render("addNewAddress");
   } catch (error) {
     console.log(error.message);
@@ -764,7 +712,6 @@ const userAddNewAddress = async (req, res) => {
 
 const userAddNewAddressPostMethod = async (req, res) => {
   try {
-    console.log("inside post adrdres");
     const userId = req.session.userId;
     const {name,phone,address,state}=req.body
 
@@ -778,7 +725,6 @@ const userAddNewAddressPostMethod = async (req, res) => {
       
     });
     await addAddress.save();
-    console.log("address added");
   } catch (error) {
     console.log(error.message);
   }
@@ -793,7 +739,6 @@ const userAddMoreAddress = async (req, res) => {
 };
 
 const userAddMoreAddressPostMethod = async (req, res) => {
-  console.log("inside POST add new address method");
   const { address, name, phone, state } = req.body;
   const userId = req.session.userId;
   const newAddress = new addressModel({
@@ -811,9 +756,7 @@ console.log(newAddress);
 
 const loadConfirmOrder = async (req, res) => {
   try {
-
     const userId = req.session.userId;
-    
     res.render("confirmOrder");
   } catch (error) {
     console.log(error.message);
@@ -822,7 +765,6 @@ const loadConfirmOrder = async (req, res) => {
 
 const confirmOrderPostMethod = async (req, res) => {
   try {
-    console.log("inside confirm");
     const userId = req.session.userId;
     const { addressForDelivery, payment } = req.body;
     const currentAddress = await addressModel.find({ userid: userId });
@@ -840,8 +782,6 @@ const confirmOrderPostMethod = async (req, res) => {
      //category offer
    const category= await Category.findOne({category:productCategory})
    categoryOffer=category.categoryOffer
-   
-   console.log('its me categoryOffer', categoryOffer);
     // coupon
     const couponCode= req.body.couponCode || '';
     let couponAvailable;
@@ -849,7 +789,6 @@ const confirmOrderPostMethod = async (req, res) => {
     let currentAmount=0;
     let currentdate = new Date();
     if(couponCode){
-      console.log('coupon');
       couponAvailable=await couponModel.findOne({couponName:couponCode})
       
           if (userCartData && userCartData.product && userCartData.product.length > 0) {
@@ -863,18 +802,11 @@ const confirmOrderPostMethod = async (req, res) => {
                 subtotal = subtotal - couponValue
             }
     }
-    console.log(subtotal)
-
     const cart = await cartModel.findOne({ userid: userId });
-    // console.log(cart);
     const productIdOnly = cart.product.map((item) => item.productId);
-
     const user = await addressModel.findOne({ userid: userId.toString() });
-
     const products = await Product.find({ _id: { $in: productIdOnly } });
-
     const priceMap = new Map();
-    // console.log('price map');
     products.forEach((product) => {
       priceMap.set(product._id.toString(), product.price);
     });
@@ -893,7 +825,6 @@ const confirmOrderPostMethod = async (req, res) => {
       const productTotal = productPrice * quantity;
      
       totalAmount += (productTotal -categoryOffer);
-      console.log('totalAmount',totalAmount);
       totalQuantity += quantity;
     
       return {
@@ -917,12 +848,9 @@ const confirmOrderPostMethod = async (req, res) => {
     }
     
     if(totalAmount || subtotal){
-      console.log(totalAmount,"total");
-      console.log(subtotal,"subtotal");
       orderCount=totalAmount? totalAmount:subtotal
     }
-    console.log(subtotal,"subtotal");
-    console.log("orderCount",orderCount);
+
 
     const newOrder = new orderModel({
       userId: userId,
@@ -966,7 +894,6 @@ const confirmOrderPostMethod = async (req, res) => {
       // Decrease wallet amount
       const newWalletAmount = wallet.totalRefundAmount - orderCount;
       const updateWallet= await walletModel.findOneAndUpdate({ userId }, { totalRefundAmount: newWalletAmount });
-      console.log("its new wallet",updateWallet);
 
     }
 
@@ -1010,8 +937,6 @@ const loadUserProfile = async (req, res) => {
     let users = await UserList.findOne({ _id: userId });
     let code = users.referralCode;
 
-    console.log('its me cart', cart);
-
     res.render('userProfile', {
       category,
       userDetails,
@@ -1029,10 +954,8 @@ const loadUserProfile = async (req, res) => {
 //my profile editing
 const loadMyProfile=async(req,res)=>{
   try {
-    // console.log('inside my profile');
     const userId = req.session.userId;
     const userDetails=await UserList.findOne({_id:userId})
-    // console.log(userDetails);  
     res.render('myProfile',{userDetails})
   } catch (error) {
     console.log(error.message);
@@ -1040,7 +963,6 @@ const loadMyProfile=async(req,res)=>{
 }
 
 const myProfileEdit = async (req, res) => {
-  // console.log('inside my post method profile');
   const { name, phone, email } = req.body;
   const userId = req.session.userId;
 
@@ -1064,25 +986,16 @@ const myProfileEdit = async (req, res) => {
 // view oder product
 const loadOrderViewProduct = async (req, res) => {
   try {
-    // console.log('order product');
     const userId = req.session.userId;
     const orderProducts = await orderModel
   .find({ userId: userId })
   .populate('product.product_id', 'product_id');
-  // console.log('products');
   const productID=orderProducts.map(order => order.product.map(p => p.product_id))
   // Flatten the productID array
   const flattenedProductID = [].concat(...productID);
   // Find product names using the product IDs
   const productDetails = await Product.find({ _id: { $in: flattenedProductID } });
-  
   const order = await orderModel.findOne({ userId: userId });
-  // console.log(order.orderDate);
-  //   const addressId = order?.address; // Retrieve the address ObjectId
-    
-  //   const orderAddress = await addressModel.findOne({ _id: addressId });
-  //   console.log(orderAddress);
-
     res.render('orderViewProduct', {productDetails,order});
   } catch (error) {
     console.log(error.message);
@@ -1097,7 +1010,6 @@ const createPaymentOrder = async (req, res) => {
     if(couponCode){
       let couponAmounts= await couponModel.findOne({couponName:couponCode})
       couponAmount=couponAmounts.couponAmount
-      console.log("its me couponAmount",couponAmount);
         const amount = (req.body.total-couponAmount)* 100 ; // Multiply by 100 to convert to paise
         const options = {
           amount: amount,
@@ -1159,7 +1071,6 @@ const createPaymentOrder = async (req, res) => {
 // Cancel Order
 const loadcanceledProduct=async(req,res)=>{
   try {
-    // console.log('inside Cancel order');
     const orderId=req.query.id;
   
     const filter= {_id:orderId}
@@ -1167,7 +1078,6 @@ const loadcanceledProduct=async(req,res)=>{
     const userId=req.session.userId;
     const orders= await orderModel.findOneAndUpdate({_id:orderId},{status:'Cancelled'});
     const order=await orderModel.findOne({_id:orders._id})
-    console.log(order)
     if(order.paymentMethod==='Net Banking' || order.paymentMethod==='Wallet' && order.status==="Cancelled"){
       const wallet=await walletModel.findOne({userId:order.userId});
       if(!wallet){
@@ -1183,13 +1093,11 @@ const loadcanceledProduct=async(req,res)=>{
           ]
         });
         const savedWallet= await newWallet.save();
-        console.log(savedWallet);
       }else{
         const existingCancel= wallet.cancel.find(
           (cancel)=>cancel.orderId.toString()===orderId
         );
         if(existingCancel){
-          console.log('Return already done');
         }else{
           wallet.cancel.push({
             orderId: order._id,
@@ -1199,7 +1107,6 @@ const loadcanceledProduct=async(req,res)=>{
           });
           wallet.totalRefundAmount+=order.total;
           const savedWallet=await wallet.save();
-          console.log(savedWallet);
         }
       }
     }
@@ -1229,7 +1136,6 @@ const loadUserCoupon=async(req,res)=>{
 
 const checkCouponAvailable = async (req, res) => {
   try {
-    console.log('inside coupon check');
     const userId=req.session.userId
     const code = req.body.code;
     const coupon = await couponModel.findOne({ couponName: { $regex: new RegExp('^' + code + '$', 'i') } });
@@ -1254,10 +1160,8 @@ const checkCouponAvailable = async (req, res) => {
     }
     
     if (subtotal !== 0) {
-      console.log('true');
       res.json({ available: true, subtotal: subtotal ,couponAmounts:couponAmount}); // Coupon is available, send subtotal in the response
     } else {
-      console.log('false');
       res.json({ available: false }); // Coupon is not available
     }
 
@@ -1272,10 +1176,8 @@ const checkCouponAvailable = async (req, res) => {
 
 const loadWishlist=async(req,res)=>{
   try {
-    console.log('wishlist get method');
     const userId = req.session.userId;
     const wishlist=await wishlistModel.findOne({userId:userId}).populate('product.product_id')
-
     const category = await Category.find({});
     res.render('wishlist',{category,wishlist})
   } catch (error) {
@@ -1284,11 +1186,8 @@ const loadWishlist=async(req,res)=>{
 }
 const wishlistPostMethod = async (req, res) => {
   try {
-    console.log('wishlist Post method');
     const userId = req.session.userId;
     const { productId } = req.body;
-    console.log(req.body);
-    console.log(productId);
     const filter = { userId: userId };
     const userIs = await wishlistModel.findOne(filter).then((wishlist) => {
       if (!wishlist) {
@@ -1309,10 +1208,9 @@ const wishlistPostMethod = async (req, res) => {
         }
       }
     }).then((updatedwishlist) => {
-      console.log(updatedwishlist);
       return res.json({ updatedwishlist });
     });
-    console.log(productId);
+   
   } catch (error) {
     console.log(error.message);
   }

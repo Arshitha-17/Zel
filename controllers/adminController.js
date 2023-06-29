@@ -23,7 +23,6 @@ const securePassword=async(password)=>{
 
 const loginPage=async(req,res)=>{
     try {
-        console.log("adminlogin");
         res.render('admin/adminLogin')
         return;
     } catch (error) {
@@ -33,13 +32,9 @@ const loginPage=async(req,res)=>{
 
 const loginVerify= async(req,res)=>{
     try {
-
         const productData=await Product.find({})
-
         const adminKey=req.body.adminKey;
-        console.log(adminKey);
         const password=req.body.password;
-        console.log(password);
         const is_Match_admin=await adminModel.findOne({adminKey:adminKey})
         if(is_Match_admin){
             let passwordMatch= await bcrypt.compare(password,is_Match_admin.password);
@@ -52,7 +47,6 @@ const loginVerify= async(req,res)=>{
             
           
         }else{
-            console.log('user not found');
             res.render('admin/adminLogin',{message:'admin key not found'})
         }
     } catch (error) {
@@ -63,7 +57,6 @@ const loginVerify= async(req,res)=>{
 // otp send mail
 const sendOtp=async(email,otp)=>{
     try {
-        console.log(`Inside Email function${email},${otp}`)
         const transporter=nodemailer.createTransport({
             host:'smtp.gmail.com',
             port:587,
@@ -109,17 +102,14 @@ const adminForgetPage=async(req,res)=>{
 
 const adminForgetPostMethod= async(req,res)=>{
     try {
-        console.log("inside forget post method");
         const adminKey=req.body.adminKey;
         const is_Match_admin=await adminModel.findOne({adminKey:adminKey})
 
         console.log(adminKey);
         if(is_Match_admin){
-            console.log("Generating OTP Email")
             let OTPgenerated=Math.floor(100000 + Math.random() * 900000);
             sendOtp(is_Match_admin.adminKey,OTPgenerated);
             const OTPAddedToDatabase=await adminModel.updateOne({adminKey:adminKey},{$set:{otp:OTPgenerated}});
-            console.log("Set OTP to Database");
             req.session._id=is_Match_admin._id;
 
            res.render('admin/adminOtpVerification')
@@ -143,11 +133,8 @@ const adminOtpVerification= async(req,res)=>{
 
 const adminOtpPostMethod=async(req,res)=>{
     try {
-        const adminOtp=req.body.otp;
-        console.log(req.session._id);
+        const adminOtp=req.body.otp;;
         const is_Match_admin=await adminModel.findById({_id:req.session._id});
-        console.log(is_Match_admin.adminKey);
-
         req.session._id=is_Match_admin._id;
         if(is_Match_admin.otp===adminOtp){
             res.render('admin/adminResetPassword')
@@ -171,17 +158,11 @@ const adminResetPassword=async(req,res)=>{
 
 const adminResetPasswordPostMethod=async(req,res)=>{
     try {
-        console.log("Inside Post Method")
         const password=req.body.password; 
-        console.log(password);
         const sPassword=await securePassword(password);
-
         const is_Match_admin=await adminModel.findById({_id:req.session._id});
-        console.log(is_Match_admin._id);
-
         const updatedData= await adminModel.findByIdAndUpdate({_id:is_Match_admin._id},{$set:{password:sPassword,otp:''}});
         res.render('admin/home')
-
     } catch (error) {
         console.log(error.message);
     }
@@ -189,7 +170,6 @@ const adminResetPasswordPostMethod=async(req,res)=>{
 
 const dashboardLoad=async(req,res)=>{
     try {
-        console.log('inside dashboard');
         const admin=await adminModel.findOne()     
         const orders=await orderModel.find({}).populate('address').populate('userId').exec()
         const pendingOrders= orders.filter(order=>order.status==='Pending')
@@ -205,8 +185,6 @@ const dashboardLoad=async(req,res)=>{
             return sum+refund.cancelAmount;
         },0)
         const totalSaleAmount=totalAmount - refundAmount
-        console.log(totalSaleAmount)
-
         res.render('admin/adminDashboard',
         {
             title:"Dashboard",
@@ -243,19 +221,15 @@ const loadOrderStatus=async(req,res)=>{
 // approveDelivery
 const approveDelivery = async (req, res) => {
     try {
-      console.log('inside Delivery');
       const orderId = req.body.orderId;
-      console.log(orderId);
       const currentDate=new Date();
       const formattedDate=currentDate.toISOString().split('T')[0];
-      console.log(formattedDate);
       const update={
         delivered:true,
         'deliveredDate':formattedDate,
         status:'Delivered'
       };
       const updatedDelivery= await orderModel.findByIdAndUpdate(orderId,update);
-      console.log(updatedDelivery);
       res.json({success:true});
     } catch (error) {
       console.log(error.message);
@@ -281,8 +255,6 @@ const adminAddCatogery = async (req, res) => {
     try {
       let category = req.body.category;
       let offer = req.body.offer;
-      console.log(offer);
-  
       const checkCategory = await Category.findOne({ category: { $regex: category, $options: 'i' } });
       if (checkCategory) {
         let categories = await Category.find({}).lean();
@@ -338,8 +310,6 @@ const adminAddProduct=async(req,res)=>{
 }
 const insertProduct=async(req,res)=>{
     try {
-        console.log('in the body');
-        console.log(req.body);
         const product = new Product({
             name:req.body.name,
             price:req.body.price,
@@ -354,7 +324,6 @@ const insertProduct=async(req,res)=>{
             res.redirect('/admin/adminProductList')
         }
         else{
-            console.log('upload error');
         }
 
     } catch (error) {
@@ -366,10 +335,7 @@ const adminDeleteProduct=async(req,res)=>{
     try {
         
         let ProductId=req.query.id;
-        console.log(ProductId);
-
         const productData= await Product.findByIdAndDelete({_id:ProductId})
-        console.log(productData);
         res.redirect('/admin/adminProductList')
 
     } catch (error) {
@@ -381,11 +347,7 @@ const editProduct=async(req,res)=>{
     try {
         let categoryList=await Category.find({}).lean();
         let editProduct=await Product.findById({_id:req.query.id}).lean();
-
-        console.log(editProduct);
-
         res.render('admin/editProduct',{title:'edit product',editProduct,categoryList})
-
     } catch (error) {
         console.log(error.message);
     }
@@ -411,9 +373,6 @@ const adminEditProductPost=async(req,res)=>{
             {_id:req.query.id},
             {$set:updateFields}
           );
-
-          console.log(product);
-
           if(product){
             res.redirect('/admin/adminProductList')
           }
@@ -466,15 +425,12 @@ const addCoupon=async(req,res)=>{
 
 const addCouponPostMethod = async (req, res) => {
     try {
-      console.log('inside coupon post ');
-  
+
       const existingCoupon = await couponModel.findOne({ couponName: req.body.name });
       if (existingCoupon) {
         // Coupon with the same name already exists
         return res.render('admin/addCoupon', { error: 'Coupon with the same name already exists.' });
       }
-  
-      console.log(req.body);
       const coupon = new couponModel({
         couponName: req.body.name,
         couponAmount: req.body.amount,
@@ -495,9 +451,7 @@ const addCouponPostMethod = async (req, res) => {
 //Coupon list 
 const loadCouponList=async(req,res)=>{
     try {
-        console.log('inside product list');
         const coupon= await couponModel.find()
-        // console.log(coupon);
         // Check for expired coupons and delete them
         // Check for expired coupons and delete them
     const currentDate = new Date();
