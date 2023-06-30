@@ -146,7 +146,7 @@ const insertUser = async (req, res) => {
       // res.render("registration", {
       //   message: "Your registration has been successful.",
       // });
-      return res.redirect('/login')
+      return res.redirect('/')
     } else {
       res.render("registration", {
         message: "Your registration has failed.",
@@ -326,7 +326,7 @@ const resetPassword = async (req, res) => {
       { $set: { password: secure_password, token: "" } }
     );
 
-    res.redirect("/login");
+    res.redirect("/");
   } catch (error) {
     console.log(error.message);
   }
@@ -1271,7 +1271,7 @@ const checkWalletBalance = async (req, res) => {
 const userLogout = async (req, res) => {
   try {
     req.session.destroy();
-    res.redirect("/login");
+    res.redirect("/");
   } catch (error) {
     console.log(error.message);
   }
