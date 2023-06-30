@@ -24,7 +24,7 @@ const bodyParser= require('body-parser');
 user_route.use(bodyParser.json());
 user_route.use(bodyParser.urlencoded({extended:true}));
 const  session=require('express-session');
-const MongoDBStore = require('connect-mongodb-session')(session);
+// const MongoDBStore = require('connect-mongodb-session')(session);
 
 const mongoStore = new MongoDBStore({
     uri: 'mongodb://127.0.0.1:27017/zel_cake',
@@ -37,7 +37,7 @@ user_route.use(session({
     secret:config.sessionSecret,
     resave: false,
     saveUninitialized: false,
-    store: mongoStore,
+    // store: mongoStore,
 }));
 
 const auth=require('../middleware/auth')
