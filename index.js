@@ -1,5 +1,11 @@
 const mongoose= require('mongoose');
-mongoose.connect('mongodb://127.0.0.1:27017/zel_cake');
+const DB= 'mongodb+srv://arshithaachu165:fXW68wcuc41iUdaH@cluster0.wwbby5a.mongodb.net/zel_cakes?retryWrites=true&w=majority'
+
+mongoose.connect(DB).then(()=>{
+    console.log('connection successfully');
+}).catch((error)=>{
+    console.log(error);
+})
 const nocache=require('nocache');
 const path=require('path');
 const express= require('express');

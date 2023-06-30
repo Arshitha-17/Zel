@@ -491,8 +491,6 @@ const homeLoad = async (req, res) => {
   }
 };
 
-
-
 // product detail page
 const productDetailPage = async (req, res) => {
   try {
@@ -527,8 +525,6 @@ const categorySorting = async (req, res) => {
     console.log(error.message);
   }
 };
-
-
 
 // add to cart
 const addtoCartPage = async (req, res) => {
@@ -656,7 +652,6 @@ const updateQuatity = async (req, res) => {
 };
 
 // add address page
-
 const addAddressPage = async (req, res) => {
   try {
     const userId = req.session.userId;
@@ -699,8 +694,6 @@ const addAddressPage = async (req, res) => {
     console.log(error.message);
   }
 };
-
-
 
 const userAddNewAddress = async (req, res) => {
   try {
@@ -1067,7 +1060,6 @@ const createPaymentOrder = async (req, res) => {
   }
 };
 
-
 // Cancel Order
 const loadcanceledProduct=async(req,res)=>{
   try {
@@ -1173,7 +1165,6 @@ const checkCouponAvailable = async (req, res) => {
 };
 
 // wishlist
-
 const loadWishlist=async(req,res)=>{
   try {
     const userId = req.session.userId;
@@ -1184,6 +1175,7 @@ const loadWishlist=async(req,res)=>{
     console.log(error.message);
   }
 }
+
 const wishlistPostMethod = async (req, res) => {
   try {
     const userId = req.session.userId;
@@ -1217,7 +1209,6 @@ const wishlistPostMethod = async (req, res) => {
 };
 
 // Wallet
-
 const loadwallet = async (req, res) => {
   try {
 
@@ -1252,7 +1243,6 @@ const loadwallet = async (req, res) => {
 };
 
 // checkWalletBalances
-
 const checkWalletBalance = async (req, res) => {
   try {
     const userId = req.session.userId;
@@ -1277,7 +1267,6 @@ const checkWalletBalance = async (req, res) => {
     res.json({ error: "An error occurred while checking the wallet balance." });
   }
 };
-
 
 const userLogout = async (req, res) => {
   try {

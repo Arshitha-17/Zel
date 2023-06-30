@@ -87,10 +87,7 @@ const sendOtp=async(email,otp)=>{
     }
 }
 
-
 // forget password
-
-
 const adminForgetPage=async(req,res)=>{
     try {
         res.render('admin/adminForget')
@@ -162,7 +159,7 @@ const adminResetPasswordPostMethod=async(req,res)=>{
         const sPassword=await securePassword(password);
         const is_Match_admin=await adminModel.findById({_id:req.session._id});
         const updatedData= await adminModel.findByIdAndUpdate({_id:is_Match_admin._id},{$set:{password:sPassword,otp:''}});
-        res.render('admin/home')
+        res.render('admin/adminDashboard')
     } catch (error) {
         console.log(error.message);
     }
@@ -285,7 +282,6 @@ const deleteCategory=async(req,res)=>{
         console.log(error.message);
     }
 }
-
 
 // product list
 const adminProductList= async(req,res)=>{
@@ -447,7 +443,6 @@ const addCouponPostMethod = async (req, res) => {
     }
   };
   
-
 //Coupon list 
 const loadCouponList=async(req,res)=>{
     try {
@@ -467,8 +462,6 @@ const loadCouponList=async(req,res)=>{
         console.log(error.message);
     }
 }
-
-
 
 //LOGIN AUTHENTICATION
 const isAdminLogIn=(req,res,next)=>{
@@ -496,7 +489,6 @@ const isAdminLogout=(req,res,next)=>{
     }
 }
 
-
 const adminLogout= async(req,res)=>{
     try {
         req.session.destroy();
@@ -505,12 +497,6 @@ const adminLogout= async(req,res)=>{
         console.log(error.message);
     }
 }
-
-
-
-
-
-
 
 
 module.exports={
