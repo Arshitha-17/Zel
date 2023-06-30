@@ -54,7 +54,7 @@ const sendVerifyMail = async (name, email, user_id) => {
       html:
         "<p> Hii " +
         name +
-        ', please click here to <a href="http://127.0.0.1:3000/verify?id=' +
+        ', please click here to <a href="http://zelcakes.shop/verify?id=' +
         user_id +
         '"> verify </a>your mail.</p>',
     };

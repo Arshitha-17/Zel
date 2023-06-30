@@ -52,7 +52,7 @@ user_route.post('/register',userController.insertUser)
 user_route.get('/verify',userController.verifyMail)
 user_route.post('/duplicateUser',userController.duplicateUser)
 
-user_route.get('/login',auth.isLogout,userController.loginPage);
+user_route.get('/',auth.isLogout,userController.loginPage);
 user_route.post('/login',userController.loginUserVerify)
 
 user_route.get('/logotp',auth.isLogout,userController.logWithOtp);
