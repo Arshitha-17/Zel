@@ -206,7 +206,7 @@ const dashboardLoad=async(req,res)=>{
 const loadOrderStatus=async(req,res)=>{
     try {
         
-        const admin=await adminModel.findOne()     
+        const admin=await adminModel.findOne();     
         const orders=await orderModel.find({}).populate('address').populate('userId').populate('product.product_id').exec()
         res.render('admin/orderStatus',
         {
@@ -233,7 +233,7 @@ const approveDelivery = async (req, res) => {
       res.json({success:true});
     } catch (error) {
       console.log(error.message);
-      res.status(500).json({success:false,error:error.message})
+      res.status(500).json({success:false,error:error.message});
     }
   }
 
