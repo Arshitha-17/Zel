@@ -247,7 +247,7 @@ const resetPasswordEmail = async (name, email, token) => {
       html:
         "<p> Hii " +
         name +
-        ', please click here to <a href="http://127.0.0.1:3000/forget?token=' +
+        ', please click here to <a href="http://zelcakes.shop/forget?token=' +
         token +
         '"> Reset </a> your password.</p>',
     };
